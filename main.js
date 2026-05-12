@@ -258,4 +258,4 @@
         randomize_order: true // SVOはランダムに提示
     };
 
-var final_timeline = [].concat(eem_timeline, [svo_instructions, svo_procedure]);
+var timeline = [].concat(eem_timeline, [svo_instructions, svo_procedure]);
