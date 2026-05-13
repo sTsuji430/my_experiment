@@ -2,30 +2,38 @@ var repo_site = "https://sTsuji430.github.io/my_experiment/";
 
 // 1. 各ブロックの教示文を生成する関数（全体の教示は分離）
 function get_eem_instruction_html(right_self, right_partner, is_unequal) {
-    var html = '<div style="text-align: left; line-height: 1.8; font-size: 20px; max-width: 800px; margin: auto; padding-bottom: 30px;">';
+    var html = '<div style="text-align: left; line-height: 1.6; font-size: 18px; max-width: 800px; margin: 0 auto; padding-bottom: 20px;">';
     if (!is_unequal) {
         html += '<div style="padding: 15px; background-color: #e9ecef; border-left: 5px solid #007bff; margin-bottom: 20px;">' +
-            '<p style="margin: 0; font-weight: bold; color: #0056b3;">新しいブロック（10問）が始まります。</p>' +
+            '<p style="font-size: 20px; margin: 0; font-weight: bold; color: #0056b3;">新しいブロック（10問）が始まります。</p>' +
             '<p style="margin: 10px 0 0 0;">このブロックでは、<strong>右側の金額が以下の組み合わせで「固定」</strong>されます。</p>' +
-            '<p style="font-size: 24px; text-align: center; margin: 15px 0 0 0;">あなた: <strong>' + right_self + '円</strong>　／　Aさん: <strong>' + right_partner + '円</strong></p>' +
+            '<p style="font-size: 24px; margin: 15px 0 0 0;">あなた: <strong>' + right_self + '円</strong>　／　Aさん: <strong>' + right_partner + '円</strong></p>' +
             '</div>' +
             '<p>左側の金額は1問ごとに変化します。<br>左右の金額をよく見比べて、好ましいと思う方を選んでください。</p>';
     } else {
         html += '<div style="padding: 15px; background-color: #e9ecef; border-left: 5px solid #28a745; margin-bottom: 20px;">' +
-            '<p style="margin: 0; font-weight: bold; color: #155724;">新しいブロック（12問）が始まります。</p>' +
+            '<p style="font-size: 20px; margin: 0; font-weight: bold; color: #155724;">新しいブロック（12問）が始まります。</p>' +
             '<p style="margin: 10px 0 0 0;">このブロックでは、金額の組み合わせのルールがこれまでとは異なります。<br>左右それぞれの金額が両方とも変化します。</p>' +
             '</div>' +
             '<p>左右の金額をよく見比べて、好ましいと思う方を選んでください。</p>';
     }
-    html += '<p style="text-align: center; margin-top: 40px; font-weight: bold; color: #d9534f;">準備ができたらスペースキーを押して進んでください。</p>';
+    html += '<p style="margin-top: 40px; font-weight: bold; color: #d9534f;">準備ができたらスペースキーを押して進んでください。</p>';
     html += '</div>';
     return html;
 }
 
 // 2. 共通のHTML生成関数
 function create_eem_stimulus(l_self, l_other, r_self, r_other) {
-    var left_box = '<div style="padding: 20px; font-size: 24px; line-height: 1.5; width: 250px; border: 2px solid #333; border-radius: 8px;">あなた: ' + l_self + '円<br>Aさん: ' + l_other + '円<br><br><span style="font-size: 18px; color: #666;">[F キー]</span></div>';
-    var right_box = '<div style="padding: 20px; font-size: 24px; line-height: 1.5; width: 250px; border: 2px solid #333; border-radius: 8px;">あなた: ' + r_self + '円<br>Aさん: ' + r_other + '円<br><br><span style="font-size: 18px; color: #666;">[J キー]</span></div>';
+    var left_box = '<div style="padding: 20px; font-size: 24px; line-height: 1.5; width: 250px; border: 2px solid #333; border-radius: 8px; text-align: center;">' +
+        '<div style="display: inline-block; text-align: left;">' +
+        '<span style="display: inline-block; width: 80px;">あなた</span>: <span style="display: inline-block; width: 60px; text-align: right;">' + l_self + '</span>円<br>' +
+        '<span style="display: inline-block; width: 80px;">Aさん</span>: <span style="display: inline-block; width: 60px; text-align: right;">' + l_other + '</span>円' +
+        '</div><br><br><span style="font-size: 18px; color: #666;">[F キー]</span></div>';
+    var right_box = '<div style="padding: 20px; font-size: 24px; line-height: 1.5; width: 250px; border: 2px solid #333; border-radius: 8px; text-align: center;">' +
+        '<div style="display: inline-block; text-align: left;">' +
+        '<span style="display: inline-block; width: 80px;">あなた</span>: <span style="display: inline-block; width: 60px; text-align: right;">' + r_self + '</span>円<br>' +
+        '<span style="display: inline-block; width: 80px;">Aさん</span>: <span style="display: inline-block; width: 60px; text-align: right;">' + r_other + '</span>円' +
+        '</div><br><br><span style="font-size: 18px; color: #666;">[J キー]</span></div>';
 
     var combined_html = '<p style="margin-bottom: 50px; font-size: 28px; font-weight: bold;">どちらの配分を選びますか？<br><span style="font-size: 20px; font-weight: normal; color: #555;">（左なら F キー、右なら J キーを押してください）</span></p>' +
         '<div style="display: flex; justify-content: center; gap: 50px;">' + left_box + right_box + '</div>';
@@ -42,7 +50,19 @@ function create_eem_stimulus(l_self, l_other, r_self, r_other) {
 var eem_timeline = [];
 
 // =========================================================
-// ★最重要修正：eem_trial と eem_iti を一番最初に定義しておく
+// ★各試行間の注視点（フィードバック後の画面リセット・連打防止用）
+// =========================================================
+var fixation = {
+    type: 'html-keyboard-response',
+    stimulus: '<div style="font-size: 60px; color: #333; margin-top: 100px;">+</div>',
+    choices: jsPsych.NO_KEYS,
+    trial_duration: 500, // 500ミリ秒間注視点を表示
+    post_trial_gap: 0,
+    data: { task: 'fixation' }
+};
+
+// =========================================================
+// ★最重要修正：eem_trial と eem_feedback を一番最初に定義しておく
 // =========================================================
 var eem_trial = {
     type: 'html-keyboard-response',
@@ -58,17 +78,45 @@ var eem_trial = {
     post_trial_gap: 0
 };
 
-var eem_iti = {
+var eem_feedback = {
     type: 'html-keyboard-response',
-    stimulus: '<p style="margin-bottom: 50px; font-size: 28px; font-weight: bold;">どちらの配分を選びますか？<br><span style="font-size: 20px; font-weight: normal; color: #555;">（左なら F キー、右なら J キーを押してください）</span></p>' +
-        '<div style="display: flex; justify-content: center; gap: 50px; visibility: hidden;">' +
-        '<div style="padding: 20px; font-size: 24px; line-height: 1.5; width: 250px; border: 2px solid #333; border-radius: 8px;">あなた: 0円<br>Aさん: 0円<br><br><span style="font-size: 18px; color: #666;">[F キー]</span></div>' +
-        '<div style="padding: 20px; font-size: 24px; line-height: 1.5; width: 250px; border: 2px solid #333; border-radius: 8px;">あなた: 0円<br>Aさん: 0円<br><br><span style="font-size: 18px; color: #666;">[J キー]</span></div>' +
-        '</div>',
+    stimulus: function () {
+        var last_trial_data = jsPsych.data.get().last(1).values()[0];
+        var response = last_trial_data.response;
+        var l_self = jsPsych.timelineVariable('left_self', true);
+        var l_partner = jsPsych.timelineVariable('left_partner', true);
+        var r_self = jsPsych.timelineVariable('right_self', true);
+        var r_partner = jsPsych.timelineVariable('right_partner', true);
+
+        // 選ばれた方を緑色に強調し、選ばれなかった方を少し薄くする
+        var left_bg = (response === 'f') ? '#d4edda' : '#f8f9fa';
+        var left_border = (response === 'f') ? '#28a745' : '#ccc';
+        var left_shadow = (response === 'f') ? 'box-shadow: 0 0 15px rgba(40,167,69,0.6);' : '';
+        var left_opacity = (response === 'f') ? '1' : '0.4';
+
+        var right_bg = (response === 'j') ? '#d4edda' : '#f8f9fa';
+        var right_border = (response === 'j') ? '#28a745' : '#ccc';
+        var right_shadow = (response === 'j') ? 'box-shadow: 0 0 15px rgba(40,167,69,0.6);' : '';
+        var right_opacity = (response === 'j') ? '1' : '0.4';
+
+        var left_box = '<div style="padding: 20px; font-size: 24px; line-height: 1.5; width: 250px; border: 2px solid ' + left_border + '; border-radius: 8px; background-color: ' + left_bg + '; ' + left_shadow + ' opacity: ' + left_opacity + '; text-align: center;">' +
+            '<div style="display: inline-block; text-align: left;">' +
+            '<span style="display: inline-block; width: 80px;">あなた</span>: <span style="display: inline-block; width: 60px; text-align: right;">' + l_self + '</span>円<br>' +
+            '<span style="display: inline-block; width: 80px;">Aさん</span>: <span style="display: inline-block; width: 60px; text-align: right;">' + l_partner + '</span>円' +
+            '</div><br><br><span style="font-size: 18px; color: #666;">[F キー]</span></div>';
+        var right_box = '<div style="padding: 20px; font-size: 24px; line-height: 1.5; width: 250px; border: 2px solid ' + right_border + '; border-radius: 8px; background-color: ' + right_bg + '; ' + right_shadow + ' opacity: ' + right_opacity + '; text-align: center;">' +
+            '<div style="display: inline-block; text-align: left;">' +
+            '<span style="display: inline-block; width: 80px;">あなた</span>: <span style="display: inline-block; width: 60px; text-align: right;">' + r_self + '</span>円<br>' +
+            '<span style="display: inline-block; width: 80px;">Aさん</span>: <span style="display: inline-block; width: 60px; text-align: right;">' + r_partner + '</span>円' +
+            '</div><br><br><span style="font-size: 18px; color: #666;">[J キー]</span></div>';
+
+        return '<p style="margin-bottom: 50px; font-size: 28px; font-weight: bold;">どちらの配分を選びますか？<br><span style="font-size: 20px; font-weight: normal; color: #555;">（左なら F キー、右なら J キーを押してください）</span></p>' +
+            '<div style="display: flex; justify-content: center; gap: 50px;">' + left_box + right_box + '</div>';
+    },
     choices: jsPsych.NO_KEYS,
-    trial_duration: 500,
+    trial_duration: 500, // 500ミリ秒間フィードバックを表示
     post_trial_gap: 0,
-    data: { task: 'iti' }
+    data: { task: 'eem_feedback' }
 };
 
 // =========================================================
@@ -87,27 +135,26 @@ var imc_quiz_combined = {
         // ★冒頭で定義した repo_site と、画像フォルダのパスを結合してURLを作る
         var img_url = repo_site + "image/y_o.png";
 
-        // 全体のフォントサイズと行間、下の余白を少し縮小
-        var html = '<div style="text-align: left; line-height: 1.4; font-size: 18px; max-width: 800px; margin: auto;">';
+        var html = '<div style="text-align: left; line-height: 1.6; font-size: 18px; max-width: 800px; margin: 0 auto; padding-bottom: 20px;">';
 
-        html += '<p style="font-weight: bold; font-size: 22px; border-bottom: 2px solid #333; padding-bottom: 5px; margin-bottom: 10px;">【課題の状況について】</p>';
-        html += '<p style="margin-bottom: 5px;">課題では、次のような場面を思い浮かべて回答をして下さい。<br>あなたが見知らぬ相手と二人組になった場面を思い浮かべてください。お互いに匿名です。</p>';
+        html += '<p style="font-size: 24px; font-weight: bold; text-align: left; border-bottom: 2px solid currentColor; padding-bottom: 10px; margin-bottom: 20px; color: #333;">【課題の状況について】</p>';
+        html += '<p style="margin-bottom: 10px;">課題では、次のような場面を思い浮かべて回答をして下さい。<br>あなたが見知らぬ相手と二人組になった場面を思い浮かべてください。お互いに匿名です。</p>';
 
         // ★画像の上下余白を減らし、縦に大きくなりすぎないよう max-height を追加
-        html += '<div style="text-align: center; margin: 10px 0;">';
+        html += '<div style="text-align: center; margin: 15px 0;">';
         html += '<img src="' + img_url + '" style="max-width: 40%; max-height: 160px; width: auto; height: auto;">';
         html += '</div>';
 
-        html += '<p style="margin-bottom: 5px;">この相手とのお金の分配についての決定を、あなたが行います。</p>';
-        html += '<p style="margin-bottom: 10px;">課題の状況を想像できた方は、下の確認クイズに回答してください。<br><span style="color: #d9534f; font-weight: bold;">※クイズへの回答は2回までです。</span></p>';
+        html += '<p style="margin-bottom: 10px;">この相手とのお金の分配についての決定を、あなたが行います。</p>';
+        html += '<p style="margin-bottom: 10px;">課題の状況を想像できた方は、下の確認クイズに回答してください。<br><strong style="color: #d9534f;">※クイズへの回答は2回までです。</strong></p>';
 
         // 区切り線の上下余白を 40px から 15px に縮小
-        html += '<hr style="margin: 15px 0; border: 0; border-top: 2px dashed #ccc;">';
+        html += '<hr style="margin: 20px 0; border: 0; border-top: 2px dashed #ccc;">';
 
-        html += '<div style="text-align: left;">'; // 左揃えに変更
+        html += '<div style="text-align: left; padding: 15px; background-color: #f8f9fa; border-radius: 8px; border: 1px solid #ddd;">';
         html += '<p style="font-weight: bold; color: #d9534f; margin-bottom: 5px;">【2回以上不正解だった場合、報酬をお支払いすることはできません】</p>';
-        html += '<p style="margin-bottom: 5px;">（' + (imc_fail_count + 1) + '回目）</p>';
-        html += '<p style="font-size: 22px; margin: 10px 0; text-align: center; font-weight: bold;">課題で想像する相手は、____である。</p>'; // ここだけ中央が見やすいのでキープ
+        html += '<p style="margin-bottom: 10px;">（' + (imc_fail_count + 1) + '回目）</p>';
+        html += '<p style="font-size: 22px; font-weight: bold; margin: 0; color: #333;">課題で想像する相手は、____である。</p>';
         html += '</div></div>';
 
         return html;
@@ -129,20 +176,19 @@ var imc_quiz_combined = {
 var imc_feedback = {
     type: 'html-button-response',
     stimulus: function () {
-        // ★フィードバック全体を左揃え（text-align: left）に変更
-        var html = '<div style="text-align: left; line-height: 1.8; font-size: 20px; max-width: 800px; margin: auto; padding: 30px 0;">';
+        var html = '<div style="text-align: left; line-height: 1.6; font-size: 18px; max-width: 800px; margin: 0 auto; padding-bottom: 20px;">';
 
         if (imc_passed) {
-            html += '<p style="font-size: 28px; color: #28a745; font-weight: bold; border-bottom: 2px solid #28a745; padding-bottom: 10px;">正解です！</p>' +
-                '<p>この課題で想像する場面は、見知らぬ人と2人組になった場面です。</p>';
+            html += '<p style="font-size: 24px; font-weight: bold; text-align: left; border-bottom: 2px solid currentColor; padding-bottom: 10px; margin-bottom: 20px; color: #28a745;">正解です！</p>' +
+                '<p>この課題で想像する場面は、<strong>見知らぬ人と2人組になった場面</strong>です。</p>';
         } else {
             if (imc_fail_count >= 2) {
-                html += '<p style="font-size: 28px; color: #d9534f; font-weight: bold; border-bottom: 2px solid #d9534f; padding-bottom: 10px;">不正解です！</p>' +
-                    '<p>この課題で想像する場面は、見知らぬ人と2人組になった場面です。</p>' +
-                    '<p style="color: #d9534f; font-weight: bold; margin-top: 20px;">2回不正解であったため、報酬をお支払いすることはできません。</p>';
+                html += '<p style="font-size: 24px; font-weight: bold; text-align: left; border-bottom: 2px solid currentColor; padding-bottom: 10px; margin-bottom: 20px; color: #d9534f;">不正解です！</p>' +
+                    '<p>この課題で想像する場面は、<strong>見知らぬ人と2人組になった場面</strong>です。</p>' +
+                    '<p style="color: #d9534f; font-weight: bold; margin-top: 20px;">2回不正解であったため、報酬をお支払いすることはできません。<br>次のページに進んでください。</p>';
             } else {
-                html += '<p style="font-size: 28px; color: #d9534f; font-weight: bold; border-bottom: 2px solid #d9534f; padding-bottom: 10px;">不正解です！</p>' +
-                    '<p>この課題で想像する場面は、見知らぬ人と2人組になった場面です。</p>' +
+                html += '<p style="font-size: 24px; font-weight: bold; text-align: left; border-bottom: 2px solid currentColor; padding-bottom: 10px; margin-bottom: 20px; color: #d9534f;">不正解です！</p>' +
+                    '<p>この課題で想像する場面は、<strong>見知らぬ人と2人組になった場面</strong>です。</p>' +
                     '<p style="margin-top: 20px;">再度確認テストに回答してください。</p>';
             }
         }
@@ -179,9 +225,8 @@ var eem_keyboard_instruction = {
         // 画像のURLを指定
         var img_url = repo_site + "image/key_instruction.png";
 
-        // 全体のフォントサイズと行間、下の余白を少し縮小
-        var html = '<div style="text-align: left; line-height: 1.4; font-size: 18px; max-width: 800px; margin: auto;">' +
-            '<p style="font-size: 22px; font-weight: bold; color: #0056b3; margin-bottom: 10px;">ここからはキーボードを使います</p>' +
+        var html = '<div style="text-align: left; line-height: 1.6; font-size: 18px; max-width: 800px; margin: 0 auto; padding-bottom: 20px;">' +
+            '<p style="font-size: 24px; font-weight: bold; text-align: left; border-bottom: 2px solid currentColor; padding-bottom: 10px; margin-bottom: 20px; color: #333;">ここからはキーボードを使います</p>' +
             '<p style="margin-bottom: 10px;">課題は、あなたの報酬分配の好みについて尋ねています。<br>' +
             'どちらの分配が好ましいと思うかを、2択から選んでください。</p>';
 
@@ -191,11 +236,11 @@ var eem_keyboard_instruction = {
         html += '</div>';
 
         // 枠内の余白（padding）や、上部の空白（margin-top）を縮小
-        html += '<div style="text-align: center; margin-top: 15px; padding: 15px; background-color: #f8f9fa; border-radius: 8px; border: 1px solid #ddd;">' +
+        html += '<div style="text-align: left; margin-top: 15px; padding: 15px; background-color: #f8f9fa; border-radius: 8px; border: 1px solid #ddd;">' +
             '<strong style="font-size: 20px;">【回答方法】</strong><br>' +
             '<span style="display: inline-block; margin-top: 5px;">左の分配が好ましい場合は <strong>Fキー</strong> を、右の分配が好ましい場合は <strong>Jキー</strong> を押してください。</span>' +
             '</div>' +
-            '<p style="text-align: center; margin-top: 20px; font-weight: bold; color: #d9534f;">準備ができたらスペースキーを押して、練習課題へ進んでください。</p>' +
+            '<p style="margin-top: 20px; font-weight: bold; color: #d9534f;">準備ができたらスペースキーを押して、練習課題へ進んでください。</p>' +
             '</div>';
 
         return html;
@@ -229,16 +274,16 @@ var practice_stimuli = [
 ];
 
 var practice_procedure = {
-    timeline: [practice_trial, eem_iti],
+    timeline: [practice_trial, eem_feedback, fixation],
     timeline_variables: practice_stimuli
 };
 
 var practice_end = {
     type: 'html-keyboard-response',
-    stimulus: '<div style="text-align: left; line-height: 1.8; font-size: 20px; max-width: 800px; margin: auto; padding-bottom: 30px;">' +
-        '<p style="font-size: 24px; font-weight: bold;">練習が終わりました。</p>' +
+    stimulus: '<div style="text-align: left; line-height: 1.6; font-size: 18px; max-width: 800px; margin: 0 auto; padding-bottom: 20px;">' +
+        '<p style="font-size: 24px; font-weight: bold; text-align: left; border-bottom: 2px solid currentColor; padding-bottom: 10px; margin-bottom: 20px; color: #333;">練習が終わりました</p>' +
         '<p>これより本番が始まります。<br>本番はいくつかのブロックに分かれており、ブロックごとにルールの説明が表示されます。</p>' +
-        '<p style="text-align: center; margin-top: 40px; font-weight: bold; color: #d9534f;">準備ができたらスペースキーを押して本番を開始してください。</p>' +
+        '<p style="margin-top: 40px; font-weight: bold; color: #d9534f;">準備ができたらスペースキーを押して本番を開始してください。</p>' +
         '</div>',
     choices: [' ']
 };
@@ -276,7 +321,7 @@ right_options.forEach(function (opt) {
                 choices: [' ']
             },
             {
-                timeline: [eem_trial, eem_iti],
+                timeline: [eem_trial, eem_feedback, fixation],
                 timeline_variables: block_stimuli,
                 randomize_order: true // ★ ブロック内の試行をランダム化
             }
@@ -318,7 +363,7 @@ eem_timeline.push({
             choices: [' ']
         },
         {
-            timeline: [eem_trial, eem_iti],
+            timeline: [eem_trial, eem_feedback, fixation],
             timeline_variables: unequal_stimuli,
             randomize_order: true // ★ ブロック内の試行はランダム化する
         }
@@ -334,25 +379,42 @@ var svo_instructions = {
         // ★冒頭で定義した repo_site を使用
         var img_url = repo_site + "image/y_o.png";
 
-        // 全体のレイアウト調整（IMC課題と同じスタイル）
-        var html = '<div style="text-align: left; line-height: 1.4; font-size: 18px; max-width: 800px; margin: auto; padding-bottom: 20px;">';
+        var html = '<div style="text-align: left; line-height: 1.6; font-size: 18px; max-width: 800px; margin: 0 auto; padding-bottom: 20px;">';
 
-        html += '<p style="font-size: 22px; font-weight: bold; color: #0056b3; border-bottom: 2px solid #0056b3; padding-bottom: 5px; margin-bottom: 15px;">【課題３：ポイントの分配】</p>';
+        html += '<p style="font-size: 24px; font-weight: bold; text-align: left; border-bottom: 2px solid currentColor; padding-bottom: 10px; margin-bottom: 20px; color: #333;">【課題３：ポイントの分配】</p>';
         html += '<p style="margin-bottom: 10px; font-weight: bold; color: #d9534f;">（ここからはキーボードではなく、マウスを使って回答します）</p>';
         html += '<p style="margin-bottom: 5px;">この課題も、<strong>あなたが見知らぬ相手と二人組になった状況</strong>を思い浮かべてください。お互いに匿名です。</p>';
 
-        // ★ここに画像を挿入（1画面に収めるため縦幅を制限）
-        html += '<div style="text-align: center; margin: 10px 0;">';
-        html += '<img src="' + img_url + '" style="max-width: 40%; max-height: 160px; width: auto; height: auto;">';
-        html += '</div>';
+        // SVOの選択肢の例をHTMLで生成
+        var example_buttons = '<div style="display: flex; justify-content: center; gap: 8px; margin: 20px 0;">';
+        var ex_s = [50, 52, 53, 54, 56, 57, 58, 59, 60];
+        var ex_o = [45, 44, 42, 41, 40, 39, 37, 36, 35];
+        for (var i = 0; i < 9; i++) {
+            var is_active = (i === 4);
+            var bg_color = is_active ? '#d4edda' : '#f8f9fa';
+            var border_color = is_active ? '#28a745' : '#ccc';
+            var shadow = is_active ? 'box-shadow: 0 0 10px rgba(40,167,69,0.5);' : '';
+            var opacity = is_active ? '1' : '0.4';
+            example_buttons += '<div style="padding: 10px; font-size: 18px; border: 2px solid ' + border_color + '; border-radius: 6px; text-align: center; background-color: ' + bg_color + '; width: 80px; opacity: ' + opacity + '; ' + shadow + '; pointer-events: none;">' +
+                '<span style="font-size: 14px; font-weight: bold; color: #0056b3;">あなた</span><br><strong style="font-size: 22px;">' + ex_s[i] + '</strong><hr style="margin: 8px 0; border: none; border-top: 2px dashed #ccc;">' +
+                '<span style="font-size: 14px; font-weight: bold; color: #d9534f;">Aさん</span><br><strong style="font-size: 22px;">' + ex_o[i] + '</strong>' +
+                '</div>';
+        }
+        example_buttons += '</div>';
 
         html += '<p style="margin-bottom: 10px;">この相手とのポイントの配分についての決定を、あなたが行います。<br>' +
             '画面には <strong>9つの選択肢</strong> が横に並んで表示されますので、その中から、<strong>あなたにとって好ましい分配</strong>のボタンを1つクリックして選んでください。</p>';
 
-        // 例示の部分の余白を少し縮小
+        // 画像の復活（少し小さめ）
+        html += '<div style="text-align: center; margin: 15px 0;">';
+        html += '<img src="' + img_url + '" style="max-width: 60%; max-height: 120px; width: auto; height: auto;">';
+        html += '</div>';
+
+        // 例示の部分
         html += '<div style="background-color: #f8f9fa; border: 1px solid #ddd; padding: 10px 15px; border-radius: 8px; margin-top: 10px; text-align: center;">' +
-            '<p style="margin-bottom: 5px; font-weight: bold;">【選択肢の例】</p>' +
-            '<p style="font-size: 16px; margin: 0;">例えば「あなたが56ポイントを受け取り、相手が40ポイントを受け取る」<br>といった配分の組み合わせが選択肢として提示されます。</p>' +
+            '<p style="margin-bottom: 5px; font-weight: bold; text-align: left;">【選択肢の例】</p>' +
+            example_buttons +
+            '<p style="font-size: 16px; margin: 0; text-align: left;">上の例では、<strong>あなたが56ポイントを受け取り、相手が40ポイントを受け取るような配分</strong>を選択しています。</p>' +
             '</div>' +
             '</div>';
 
@@ -435,32 +497,53 @@ var svo_trial = {
     post_trial_gap: 0
 };
 
-// ★新設：SVO専用のダミー試行（ITI）
-var svo_iti = {
-    // キーボードではなく、本番と同じボタンレスポンスを使用します
+// ★新設：SVO専用のフィードバック試行
+var svo_feedback = {
     type: 'html-button-response',
-    stimulus: '<div style="text-align: center; margin-bottom: 30px;">' +
-        '<p style="font-size: 16px; color: #666; margin-bottom: 5px; font-weight: bold;">【あなた と 見知らぬ相手（Aさん） とのポイント分配】</p>' +
-        '<p style="font-size: 24px; font-weight: bold; margin: 0;">あなたにとって最も好ましい配分を1つ選んでください。</p>' +
-        '</div>',
-    // 本番と全く同じ選択肢を読み込みます
+    stimulus: function () {
+        return '<div style="text-align: center; margin-bottom: 30px;">' +
+            '<p style="font-size: 16px; color: #666; margin-bottom: 5px; font-weight: bold;">【あなた と 見知らぬ相手（Aさん） とのポイント分配】</p>' +
+            '<p style="font-size: 24px; font-weight: bold; margin: 0;">あなたにとって最も好ましい配分を1つ選んでください。</p>' +
+            '</div>';
+    },
     choices: jsPsych.timelineVariable('choices_array'),
+    button_html: '<button class="jspsych-btn" style="margin: 0 4px; padding: 0; border: none; background: none; cursor: default;">%choice%</button>',
+    trial_duration: 500,
+    response_ends_trial: false,
+    on_load: function () {
+        var last_trial_data = jsPsych.data.get().last(1).values()[0];
+        var selected_index = parseInt(last_trial_data.response);
+        var buttons = document.getElementsByClassName('jspsych-html-button-response-button');
 
-    // ★ここが魔法のコードです
-    // 本番と同じボタンを作りますが、「visibility: hidden;」を追加して透明人間にします
-    button_html: '<button class="jspsych-btn" style="margin: 0 4px; padding: 0; border: none; background: none; visibility: hidden;">%choice%</button>',
+        for (var i = 0; i < buttons.length; i++) {
+            var btn = buttons[i].querySelector('button');
+            var choice_inner = btn.querySelector('div');
 
-    trial_duration: 500, // 500ミリ秒で自動的に次の試行へ進む
-    response_ends_trial: false, // 透明なボタンの場所を誤ってクリックしても進まないようにする
-    post_trial_gap: 0,
-    data: { task: 'iti_svo' }
+            if (i === selected_index) {
+                btn.style.opacity = '1';
+                if (choice_inner) {
+                    choice_inner.style.backgroundColor = '#d4edda';
+                    choice_inner.style.border = '2px solid #28a745';
+                    choice_inner.style.boxShadow = '0 0 10px rgba(40,167,69,0.5)';
+                }
+            } else {
+                btn.style.opacity = '0.4';
+                if (choice_inner) {
+                    choice_inner.style.backgroundColor = '#f8f9fa';
+                    choice_inner.style.border = '2px solid #ccc';
+                }
+            }
+        }
+    },
+    post_trial_gap: 500, // 試行間にブランク（真っ白な画面）を設ける
+    data: { task: 'svo_feedback' }
 };
 
 // =========================================================
 // 手順のタイムライン組み立て
 // =========================================================
 var svo_procedure = {
-    timeline: [svo_trial, svo_iti], // ★試行の直後にダミー試行（ITI）を挟む
+    timeline: [svo_trial, svo_feedback], // ★試行の直後にフィードバックを表示して次へ進む
     timeline_variables: svo_stimuli,
     randomize_order: true // SVOはランダムに提示
 };
