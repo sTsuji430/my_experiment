@@ -87,24 +87,27 @@ var imc_quiz_combined = {
         // ★冒頭で定義した repo_site と、画像フォルダのパスを結合してURLを作る
         var img_url = repo_site + "image/y_o.png";
 
-        var html = '<div style="text-align: left; line-height: 1.8; font-size: 20px; max-width: 800px; margin: auto; padding-bottom: 30px;">';
+        // 全体のフォントサイズと行間、下の余白を少し縮小
+        var html = '<div style="text-align: left; line-height: 1.4; font-size: 18px; max-width: 800px; margin: auto;">';
 
-        html += '<p style="font-weight: bold; font-size: 24px; border-bottom: 2px solid #333; padding-bottom: 10px;">【課題の状況について】</p>';
-        html += '<p>課題では、次のような場面を思い浮かべて回答をして下さい。<br>あなたが見知らぬ相手と二人組になった場面を思い浮かべてください。お互いに匿名です。</p>';
+        html += '<p style="font-weight: bold; font-size: 22px; border-bottom: 2px solid #333; padding-bottom: 5px; margin-bottom: 10px;">【課題の状況について】</p>';
+        html += '<p style="margin-bottom: 5px;">課題では、次のような場面を思い浮かべて回答をして下さい。<br>あなたが見知らぬ相手と二人組になった場面を思い浮かべてください。お互いに匿名です。</p>';
 
-        // ★ここで画像を挿入（大きくなりすぎないように調整、余白も追加）
-        html += '<div style="text-align: center; margin: 30px 0;">';
-        html += '<img src="' + img_url + '" style="max-width: 40%; height: auto;">';
+        // ★画像の上下余白を減らし、縦に大きくなりすぎないよう max-height を追加
+        html += '<div style="text-align: center; margin: 10px 0;">';
+        html += '<img src="' + img_url + '" style="max-width: 40%; max-height: 160px; width: auto; height: auto;">';
         html += '</div>';
 
-        html += '<p>この相手とのお金の分配についての決定を、あなたが行います。</p>';
-        html += '<p>課題の状況を想像できた方は、下の確認クイズに回答してください。<br><span style="color: #d9534f; font-weight: bold;">※クイズへの回答は2回までです。</span></p>';
-        html += '<hr style="margin: 40px 0; border: 0; border-top: 2px dashed #ccc;">';
+        html += '<p style="margin-bottom: 5px;">この相手とのお金の分配についての決定を、あなたが行います。</p>';
+        html += '<p style="margin-bottom: 10px;">課題の状況を想像できた方は、下の確認クイズに回答してください。<br><span style="color: #d9534f; font-weight: bold;">※クイズへの回答は2回までです。</span></p>';
+
+        // 区切り線の上下余白を 40px から 15px に縮小
+        html += '<hr style="margin: 15px 0; border: 0; border-top: 2px dashed #ccc;">';
 
         html += '<div style="text-align: left;">'; // 左揃えに変更
-        html += '<p style="font-weight: bold; color: #d9534f;">【2回以上不正解だった場合、報酬をお支払いすることはできません】</p>';
-        html += '<p>（' + (imc_fail_count + 1) + '回目）</p>';
-        html += '<p style="font-size: 24px; margin: 30px 0; text-align: center; font-weight: bold;">課題で想像する相手は、____である。</p>'; // ここだけ中央が見やすいのでキープ
+        html += '<p style="font-weight: bold; color: #d9534f; margin-bottom: 5px;">【2回以上不正解だった場合、報酬をお支払いすることはできません】</p>';
+        html += '<p style="margin-bottom: 5px;">（' + (imc_fail_count + 1) + '回目）</p>';
+        html += '<p style="font-size: 22px; margin: 10px 0; text-align: center; font-weight: bold;">課題で想像する相手は、____である。</p>'; // ここだけ中央が見やすいのでキープ
         html += '</div></div>';
 
         return html;
@@ -176,22 +179,23 @@ var eem_keyboard_instruction = {
         // 画像のURLを指定
         var img_url = repo_site + "image/key_instruction.png";
 
-        var html = '<div style="text-align: left; line-height: 1.8; font-size: 20px; max-width: 800px; margin: auto; padding-bottom: 30px;">' +
-            '<p style="font-size: 24px; font-weight: bold; color: #0056b3;">ここからはキーボードを使います</p>' +
-            '<p>課題は、あなたの報酬分配の好みについて尋ねています。<br>' +
+        // 全体のフォントサイズと行間、下の余白を少し縮小
+        var html = '<div style="text-align: left; line-height: 1.4; font-size: 18px; max-width: 800px; margin: auto;">' +
+            '<p style="font-size: 22px; font-weight: bold; color: #0056b3; margin-bottom: 10px;">ここからはキーボードを使います</p>' +
+            '<p style="margin-bottom: 10px;">課題は、あなたの報酬分配の好みについて尋ねています。<br>' +
             'どちらの分配が好ましいと思うかを、2択から選んでください。</p>';
 
-        // ★キーボードの図解画像を挿入
-        html += '<div style="text-align: center; margin: 30px 0;">';
-        html += '<img src="' + img_url + '" style="max-width: 50%; height: auto; border: 1px solid #ddd; border-radius: 8px; padding: 10px; background-color: #fff;">';
+        // ★画像の上下余白を減らし、縦幅の制限 (max-height: 200px) を追加
+        html += '<div style="text-align: center; margin: 15px 0;">';
+        html += '<img src="' + img_url + '" style="max-width: 50%; max-height: 600px; width: auto; height: auto; border: 1px solid #ddd; border-radius: 8px; padding: 5px; background-color: #fff;">';
         html += '</div>';
 
-        html += '<div style="text-align: center; margin-top: 40px; padding: 20px; background-color: #f8f9fa; border-radius: 8px; border: 1px solid #ddd;">' +
-            '<strong>【回答方法】</strong><br><br>' +
-            '左の分配が好ましい場合は <strong>Fキー</strong> を押してください。<br>' +
-            '右の分配が好ましい場合は <strong>Jキー</strong> を押してください。' +
+        // 枠内の余白（padding）や、上部の空白（margin-top）を縮小
+        html += '<div style="text-align: center; margin-top: 15px; padding: 15px; background-color: #f8f9fa; border-radius: 8px; border: 1px solid #ddd;">' +
+            '<strong style="font-size: 20px;">【回答方法】</strong><br>' +
+            '<span style="display: inline-block; margin-top: 5px;">左の分配が好ましい場合は <strong>Fキー</strong> を、右の分配が好ましい場合は <strong>Jキー</strong> を押してください。</span>' +
             '</div>' +
-            '<p style="text-align: center; margin-top: 40px; font-weight: bold; color: #d9534f;">準備ができたらスペースキーを押して、練習課題へ進んでください。</p>' +
+            '<p style="text-align: center; margin-top: 20px; font-weight: bold; color: #d9534f;">準備ができたらスペースキーを押して、練習課題へ進んでください。</p>' +
             '</div>';
 
         return html;
@@ -326,13 +330,36 @@ eem_timeline.push({
 // SVOの教示画面
 var svo_instructions = {
     type: 'html-button-response',
-    stimulus: '<div style="text-align: left; line-height: 1.8; font-size: 20px; max-width: 800px; margin: auto; padding-bottom: 30px;">' +
-        '<p style="font-size: 24px; line-height: 1.5; font-weight: bold;">続いて、新しい形式の質問が始まります。</p>' +
-        '<p style="font-size: 20px; line-height: 1.5;">今度は画面に <strong>9つの選択肢</strong> が横に並んで表示されます。<br>' +
-        'その中から、最も好ましいと思う配分のボタンを1つクリックして選んでください。<br>' +
-        '<span style="color: #666; font-size: 18px;">（ここからはキーボードではなく、マウスを使って回答します）</span></p>' +
-        '</div>',
-    choices: ['次へ進む']
+    stimulus: function () {
+        // ★冒頭で定義した repo_site を使用
+        var img_url = repo_site + "image/y_o.png";
+
+        // 全体のレイアウト調整（IMC課題と同じスタイル）
+        var html = '<div style="text-align: left; line-height: 1.4; font-size: 18px; max-width: 800px; margin: auto; padding-bottom: 20px;">';
+
+        html += '<p style="font-size: 22px; font-weight: bold; color: #0056b3; border-bottom: 2px solid #0056b3; padding-bottom: 5px; margin-bottom: 15px;">【課題３：ポイントの分配】</p>';
+        html += '<p style="margin-bottom: 10px; font-weight: bold; color: #d9534f;">（ここからはキーボードではなく、マウスを使って回答します）</p>';
+        html += '<p style="margin-bottom: 5px;">この課題も、<strong>あなたが見知らぬ相手と二人組になった状況</strong>を思い浮かべてください。お互いに匿名です。</p>';
+
+        // ★ここに画像を挿入（1画面に収めるため縦幅を制限）
+        html += '<div style="text-align: center; margin: 10px 0;">';
+        html += '<img src="' + img_url + '" style="max-width: 40%; max-height: 160px; width: auto; height: auto;">';
+        html += '</div>';
+
+        html += '<p style="margin-bottom: 10px;">この相手とのポイントの配分についての決定を、あなたが行います。<br>' +
+            '画面には <strong>9つの選択肢</strong> が横に並んで表示されますので、その中から、<strong>あなたにとって好ましい分配</strong>のボタンを1つクリックして選んでください。</p>';
+
+        // 例示の部分の余白を少し縮小
+        html += '<div style="background-color: #f8f9fa; border: 1px solid #ddd; padding: 10px 15px; border-radius: 8px; margin-top: 10px; text-align: center;">' +
+            '<p style="margin-bottom: 5px; font-weight: bold;">【選択肢の例】</p>' +
+            '<p style="font-size: 16px; margin: 0;">例えば「あなたが56ポイントを受け取り、相手が40ポイントを受け取る」<br>といった配分の組み合わせが選択肢として提示されます。</p>' +
+            '</div>' +
+            '</div>';
+
+        return html;
+    },
+    choices: ['次へ進む'],
+    button_html: large_next_btn // ※定義済みの大きめのボタンを使用
 };
 
 // SVOの座標データ
@@ -382,29 +409,58 @@ for (var j = 0; j < svo_endpoints.length; j++) {
     });
 }
 
+// =========================================================
+// SVO試行とITI（ダミー試行）の定義
+// =========================================================
+
 var svo_trial = {
     type: 'html-button-response',
-    stimulus: '<p style="margin-bottom: 40px; font-size: 24px; font-weight: bold;">どの配分が最も好ましいですか？</p>',
+    stimulus: '<div style="text-align: center; margin-bottom: 30px;">' +
+        '<p style="font-size: 16px; color: #666; margin-bottom: 5px; font-weight: bold;">【あなた と 見知らぬ相手（Aさん） とのポイント分配】</p>' +
+        '<p style="font-size: 24px; font-weight: bold; margin: 0;">あなたにとって最も好ましい配分を1つ選んでください。</p>' +
+        '</div>',
     choices: jsPsych.timelineVariable('choices_array'),
-    // ボタン自体のデザインを無効化し、中の div をクリック領域にする
     button_html: '<button class="jspsych-btn" style="margin: 0 4px; padding: 0; border: none; background: none; cursor: pointer;">%choice%</button>',
     data: {
         task: 'svo',
         item_number: jsPsych.timelineVariable('item_number')
     },
     on_finish: function (data) {
-        // 選んだボタンのインデックス (0〜8) を取得
         var selected_index = data.response;
-        // 対応する金額を取得して保存
         var amounts = jsPsych.timelineVariable('amounts_array', true);
         data.self_amount = amounts[selected_index].self;
         data.other_amount = amounts[selected_index].other;
     },
-    post_trial_gap: 500
+    // ★ダミー試行をすぐ後に繋げるため、デフォルトの空白時間（真っ白になる時間）を0にします
+    post_trial_gap: 0
 };
 
+// ★新設：SVO専用のダミー試行（ITI）
+var svo_iti = {
+    // キーボードではなく、本番と同じボタンレスポンスを使用します
+    type: 'html-button-response',
+    stimulus: '<div style="text-align: center; margin-bottom: 30px;">' +
+        '<p style="font-size: 16px; color: #666; margin-bottom: 5px; font-weight: bold;">【あなた と 見知らぬ相手（Aさん） とのポイント分配】</p>' +
+        '<p style="font-size: 24px; font-weight: bold; margin: 0;">あなたにとって最も好ましい配分を1つ選んでください。</p>' +
+        '</div>',
+    // 本番と全く同じ選択肢を読み込みます
+    choices: jsPsych.timelineVariable('choices_array'),
+
+    // ★ここが魔法のコードです
+    // 本番と同じボタンを作りますが、「visibility: hidden;」を追加して透明人間にします
+    button_html: '<button class="jspsych-btn" style="margin: 0 4px; padding: 0; border: none; background: none; visibility: hidden;">%choice%</button>',
+
+    trial_duration: 500, // 500ミリ秒で自動的に次の試行へ進む
+    response_ends_trial: false, // 透明なボタンの場所を誤ってクリックしても進まないようにする
+    post_trial_gap: 0,
+    data: { task: 'iti_svo' }
+};
+
+// =========================================================
+// 手順のタイムライン組み立て
+// =========================================================
 var svo_procedure = {
-    timeline: [svo_trial],
+    timeline: [svo_trial, svo_iti], // ★試行の直後にダミー試行（ITI）を挟む
     timeline_variables: svo_stimuli,
     randomize_order: true // SVOはランダムに提示
 };
