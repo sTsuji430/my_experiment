@@ -386,35 +386,35 @@ var svo_instructions = {
         html += '<p style="margin-bottom: 5px;">この課題も、<strong>あなたが見知らぬ相手と二人組になった状況</strong>を思い浮かべてください。お互いに匿名です。</p>';
 
         // SVOの選択肢の例をHTMLで生成
-        var example_buttons = '<div style="display: flex; justify-content: center; gap: 8px; margin: 20px 0;">';
+        var example_buttons = '<div style="display: flex; justify-content: center; gap: 6px; margin: 10px 0;">';
         var ex_s = [50, 52, 53, 54, 56, 57, 58, 59, 60];
         var ex_o = [45, 44, 42, 41, 40, 39, 37, 36, 35];
         for (var i = 0; i < 9; i++) {
             var is_active = (i === 4);
             var bg_color = is_active ? '#d4edda' : '#f8f9fa';
             var border_color = is_active ? '#28a745' : '#ccc';
-            var shadow = is_active ? 'box-shadow: 0 0 10px rgba(40,167,69,0.5);' : '';
+            var shadow = is_active ? 'box-shadow: 0 0 8px rgba(40,167,69,0.5);' : '';
             var opacity = is_active ? '1' : '0.4';
-            example_buttons += '<div style="padding: 10px; font-size: 18px; border: 2px solid ' + border_color + '; border-radius: 6px; text-align: center; background-color: ' + bg_color + '; width: 80px; opacity: ' + opacity + '; ' + shadow + '; pointer-events: none;">' +
-                '<span style="font-size: 14px; font-weight: bold; color: #0056b3;">あなた</span><br><strong style="font-size: 22px;">' + ex_s[i] + '</strong><hr style="margin: 8px 0; border: none; border-top: 2px dashed #ccc;">' +
-                '<span style="font-size: 14px; font-weight: bold; color: #d9534f;">Aさん</span><br><strong style="font-size: 22px;">' + ex_o[i] + '</strong>' +
+            example_buttons += '<div style="padding: 5px; border: 2px solid ' + border_color + '; border-radius: 6px; text-align: center; background-color: ' + bg_color + '; width: 65px; opacity: ' + opacity + '; ' + shadow + '; pointer-events: none;">' +
+                '<span style="font-size: 12px; font-weight: bold; color: #0056b3;">あなた</span><br><strong style="font-size: 18px;">' + ex_s[i] + '</strong><hr style="margin: 4px 0; border: none; border-top: 2px dashed #ccc;">' +
+                '<span style="font-size: 12px; font-weight: bold; color: #E65F00;">Aさん</span><br><strong style="font-size: 18px;">' + ex_o[i] + '</strong>' +
                 '</div>';
         }
         example_buttons += '</div>';
 
-        html += '<p style="margin-bottom: 10px;">この相手とのポイントの配分についての決定を、あなたが行います。<br>' +
+        html += '<p style="margin-bottom: 5px;">この相手とのポイントの配分についての決定を、あなたが行います。<br>' +
             '画面には <strong>9つの選択肢</strong> が横に並んで表示されますので、その中から、<strong>あなたにとって好ましい分配</strong>のボタンを1つクリックして選んでください。</p>';
 
         // 画像の復活（少し小さめ）
-        html += '<div style="text-align: center; margin: 15px 0;">';
-        html += '<img src="' + img_url + '" style="max-width: 60%; max-height: 120px; width: auto; height: auto;">';
+        html += '<div style="text-align: center; margin: 5px 0;">';
+        html += '<img src="' + img_url + '" style="max-width: 50%; max-height: 80px; width: auto; height: auto;">';
         html += '</div>';
 
         // 例示の部分
-        html += '<div style="background-color: #f8f9fa; border: 1px solid #ddd; padding: 10px 15px; border-radius: 8px; margin-top: 10px; text-align: center;">' +
-            '<p style="margin-bottom: 5px; font-weight: bold; text-align: left;">【選択肢の例】</p>' +
+        html += '<div style="background-color: #f8f9fa; border: 1px solid #ddd; padding: 10px; border-radius: 8px; margin-top: 5px; text-align: center;">' +
+            '<p style="margin-bottom: 5px; font-size: 16px; font-weight: bold; text-align: left;">【選択肢の例】</p>' +
             example_buttons +
-            '<p style="font-size: 16px; margin: 0; text-align: left;">上の例では、<strong>あなたが56ポイントを受け取り、相手が40ポイントを受け取るような配分</strong>を選択しています。</p>' +
+            '<p style="font-size: 14px; margin: 0; text-align: left;">上の例では、<strong>あなたが56ポイントを受け取り、相手が40ポイントを受け取るような配分</strong>を選択しています。</p>' +
             '</div>' +
             '</div>';
 
@@ -456,9 +456,9 @@ for (var j = 0; j < svo_endpoints.length; j++) {
         var self_amt = Math.round(ep1.s + t * (ep2.s - ep1.s));
         var other_amt = Math.round(ep1.o + t * (ep2.o - ep1.o));
 
-        var btn_html = '<div style="padding: 10px; font-size: 18px; border: 2px solid #333; border-radius: 6px; text-align: center; background-color: #fff; width: 80px;">' +
-            '<span style="font-size: 14px; font-weight: bold; color: #0056b3;">あなた</span><br><strong style="font-size: 22px;">' + self_amt + '</strong><hr style="margin: 8px 0; border: none; border-top: 2px dashed #ccc;">' +
-            '<span style="font-size: 14px; font-weight: bold; color: #d9534f;">Aさん</span><br><strong style="font-size: 22px;">' + other_amt + '</strong>' +
+        var btn_html = '<div style="padding: 5px; border: 2px solid #333; border-radius: 6px; text-align: center; background-color: #fff; width: 65px;">' +
+            '<span style="font-size: 12px; font-weight: bold; color: #0056b3;">あなた</span><br><strong style="font-size: 18px;">' + self_amt + '</strong><hr style="margin: 4px 0; border: none; border-top: 2px dashed #ccc;">' +
+            '<span style="font-size: 12px; font-weight: bold; color: #E65F00;">Aさん</span><br><strong style="font-size: 18px;">' + other_amt + '</strong>' +
             '</div>';
         choices_html.push(btn_html);
         amounts.push({ self: self_amt, other: other_amt });
