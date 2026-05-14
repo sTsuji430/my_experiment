@@ -164,8 +164,8 @@ var imc_fail_count = 0;
 var imc_passed = false;
 
 // ★PC用に大きめのボタンデザインを定義（クリック時に確実にディレイを入れる）
-var large_quiz_btn = '<button class="jspsych-btn" style="font-size: 22px; padding: 15px 40px; margin: 10px 20px; cursor: pointer; min-width: 250px; transition: all 0.1s;" onmousedown="this.style.backgroundColor=\'#d4edda\'; this.style.borderColor=\'#28a745\'; this.style.transform=\'scale(0.95)\';" onclick="if(this.dataset.clicked) return; this.dataset.clicked=\'1\'; event.stopPropagation(); event.preventDefault(); var btn=this; setTimeout(function(){ btn.click(); }, 800);">%choice%</button>';
-var large_next_btn = '<button class="jspsych-btn" style="font-size: 20px; padding: 15px 50px; margin: 20px; cursor: pointer; transition: all 0.1s;" onmousedown="this.style.backgroundColor=\'#d4edda\'; this.style.borderColor=\'#28a745\'; this.style.transform=\'scale(0.95)\';" onclick="if(this.dataset.clicked) return; this.dataset.clicked=\'1\'; event.stopPropagation(); event.preventDefault(); var btn=this; setTimeout(function(){ btn.click(); }, 800);">%choice%</button>';
+var large_quiz_btn = '<button class="jspsych-btn" style="box-sizing: border-box; font-family: inherit; font-weight: bold; font-size: 22px; padding: 15px 40px; margin: 10px 20px; cursor: pointer; min-width: 250px; transition: all 0.1s;" onmousedown="this.style.backgroundColor=\'#d4edda\'; this.style.borderColor=\'#28a745\'; this.style.transform=\'scale(0.95)\';" onclick="if(this.dataset.clicked) return; this.dataset.clicked=\'1\'; event.stopPropagation(); event.preventDefault(); var btn=this; setTimeout(function(){ btn.click(); }, 800);">%choice%</button>';
+var large_next_btn = '<button class="jspsych-btn" style="box-sizing: border-box; font-family: inherit; font-weight: bold; font-size: 20px; padding: 15px 50px; margin: 20px; cursor: pointer; transition: all 0.1s;" onmousedown="this.style.backgroundColor=\'#d4edda\'; this.style.borderColor=\'#28a745\'; this.style.transform=\'scale(0.95)\';" onclick="if(this.dataset.clicked) return; this.dataset.clicked=\'1\'; event.stopPropagation(); event.preventDefault(); var btn=this; setTimeout(function(){ btn.click(); }, 800);">%choice%</button>';
 
 var imc_quiz_combined = {
     type: 'html-button-response',
@@ -460,7 +460,7 @@ var svo_instructions = {
         html += '<div style="background-color: #f8f9fa; border: 1px solid #ddd; padding: 10px 15px; border-radius: 8px; margin-top: 10px; text-align: center;">' +
             '<p style="margin-bottom: 5px; font-size: 16px; font-weight: bold; text-align: left;">【選択肢の例】</p>' +
             example_buttons +
-            '<p style="font-size: 14px; letter-spacing: -0.5px; margin: 0; text-align: left;">上の例では、<strong>あなたが56ポイント、相手が40ポイントを受け取るような配分</strong>を選択しています。</p>' +
+            '<p style="font-size: 16px; margin: 0; text-align: left;">上の例では、<strong>あなたが56ポイント、相手が40ポイントを受け取るような配分</strong>を選択しています。</p>' +
             '</div>' +
             '</div>';
 
@@ -604,4 +604,24 @@ var svo_procedure = {
     randomize_order: true // SVOはランダムに提示
 };
 
-var timeline = [].concat(eem_timeline, [svo_instructions, svo_procedure]);
+// =========================================================
+// ★実験終了のクッション画面とフルスクリーン解除
+// =========================================================
+var exit_fullscreen = {
+    type: 'fullscreen',
+    fullscreen_mode: false,
+    delay_after: 0
+};
+
+var final_cushion = {
+    type: 'html-button-response',
+    stimulus: '<div style="text-align: center; margin-bottom: 20px;">' +
+        '<p style="font-size: 24px; font-weight: bold; color: #333;">実験課題は以上で終了です。</p>' +
+        '<p style="font-size: 18px; margin-top: 20px; line-height: 1.6;">お疲れ様でした。<br>下のボタンを押して、次のアンケートに進んでください。</p>' +
+        '</div>',
+    choices: ['次のアンケートへ進む'],
+    button_html: large_next_btn,
+    post_trial_gap: 0
+};
+
+var timeline = [].concat(eem_timeline, [svo_instructions, svo_procedure, final_cushion, exit_fullscreen]);
