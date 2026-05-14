@@ -22,18 +22,35 @@ function get_eem_instruction_html(right_self, right_partner, is_unequal) {
     return html;
 }
 
-// 2. 共通のHTML生成関数
-function create_eem_stimulus(l_self, l_other, r_self, r_other) {
-    var left_box = '<div style="padding: 20px; font-size: 24px; line-height: 1.5; width: 250px; border: 2px solid #333; border-radius: 8px; text-align: center;">' +
-        '<div style="display: inline-block; text-align: left;">' +
-        '<span style="display: inline-block; width: 80px;">あなた</span>: <span style="display: inline-block; width: 60px; text-align: right;">' + l_self + '</span>円<br>' +
-        '<span style="display: inline-block; width: 80px;">Aさん</span>: <span style="display: inline-block; width: 60px; text-align: right;">' + l_other + '</span>円' +
-        '</div><br><br><span style="font-size: 18px; color: #666;">[F キー]</span></div>';
-    var right_box = '<div style="padding: 20px; font-size: 24px; line-height: 1.5; width: 250px; border: 2px solid #333; border-radius: 8px; text-align: center;">' +
-        '<div style="display: inline-block; text-align: left;">' +
-        '<span style="display: inline-block; width: 80px;">あなた</span>: <span style="display: inline-block; width: 60px; text-align: right;">' + r_self + '</span>円<br>' +
-        '<span style="display: inline-block; width: 80px;">Aさん</span>: <span style="display: inline-block; width: 60px; text-align: right;">' + r_other + '</span>円' +
-        '</div><br><br><span style="font-size: 18px; color: #666;">[J キー]</span></div>';
+// 2. 選択肢ボックスのHTMLを生成する共通関数
+function generate_eem_box_html(self_amt, other_amt, key_label, bg_color, border_color, shadow, opacity, force_two_lines) {
+    var content = '';
+    // 数値が等しい場合は1行、異なる場合（または強制2行フラグがある場合）は2行で表示（高さは72pxで固定）
+    if (self_amt === other_amt && !force_two_lines) {
+        content = '<div style="height: 72px; display: flex; align-items: center; justify-content: center; white-space: nowrap;">' +
+            '<span>あなたとAさん</span><span style="margin: 0 5px;">:</span>' +
+            '<span style="width: 60px; text-align: right; font-weight: bold;">' + self_amt + '</span>円' +
+            '</div>';
+    } else {
+        content = '<div style="height: 72px; display: flex; flex-direction: column; justify-content: center; align-items: center;">' +
+            '<div style="width: 100%; display: flex; justify-content: center; align-items: center; white-space: nowrap;">' +
+            '<span style="width: 80px; text-align: left;">あなた</span>: <span style="width: 60px; text-align: right; font-weight: bold;">' + self_amt + '</span>円' +
+            '</div>' +
+            '<div style="width: 100%; display: flex; justify-content: center; align-items: center; white-space: nowrap;">' +
+            '<span style="width: 80px; text-align: left;">Aさん</span>: <span style="width: 60px; text-align: right; font-weight: bold;">' + other_amt + '</span>円' +
+            '</div>' +
+            '</div>';
+    }
+
+    return '<div style="padding: 20px; font-size: 24px; line-height: 1.5; width: 280px; border: 2px solid ' + border_color + '; border-radius: 12px; background-color: ' + bg_color + '; ' + (shadow || "") + ' opacity: ' + opacity + '; text-align: center; display: flex; flex-direction: column; align-items: center; transition: all 0.2s;">' +
+        content +
+        '<div style="margin-top: 20px; border-top: 1px solid #ddd; padding-top: 10px; width: 60%;"><span style="font-size: 18px; color: #666;">[' + key_label + ']</span></div></div>';
+}
+
+// 3. 共通のHTML生成関数（試行用）
+function create_eem_stimulus(l_self, l_other, r_self, r_other, force_two_lines) {
+    var left_box = generate_eem_box_html(l_self, l_other, "F キー", "#fff", "#333", "", "1", force_two_lines);
+    var right_box = generate_eem_box_html(r_self, r_other, "J キー", "#fff", "#333", "", "1", force_two_lines);
 
     var combined_html = '<p style="margin-bottom: 50px; font-size: 28px; font-weight: bold;">どちらの配分を選びますか？<br><span style="font-size: 20px; font-weight: normal; color: #555;">（左なら F キー、右なら J キーを押してください）</span></p>' +
         '<div style="display: flex; justify-content: center; gap: 50px;">' + left_box + right_box + '</div>';
@@ -43,11 +60,37 @@ function create_eem_stimulus(l_self, l_other, r_self, r_other) {
         left_self: l_self,
         left_partner: l_other,
         right_self: r_self,
-        right_partner: r_other
+        right_partner: r_other,
+        force_two_lines: force_two_lines || false
     };
 }
 
 var eem_timeline = [];
+
+// =========================================================
+// ★画像の事前読み込み（Preload）
+// =========================================================
+var preload_images = {
+    type: 'preload',
+    images: [
+        repo_site + 'image/key_instruction.png',
+        repo_site + 'image/y_o.png'
+    ],
+    message: '<p>データを読み込んでいます...</p>',
+    show_progress_bar: true
+};
+eem_timeline.push(preload_images);
+
+// =========================================================
+// ★強制フルスクリーン開始設定
+// =========================================================
+var enter_fullscreen = {
+    type: 'fullscreen',
+    fullscreen_mode: true,
+    message: '<style>#jspsych-fullscreen-btn { font-size: 20px; padding: 15px 50px; margin: 20px; cursor: pointer; transition: all 0.1s; border: 1px solid #ccc; border-radius: 4px; background-color: #fff; color: #333; } #jspsych-fullscreen-btn:active { background-color: #d4edda; border-color: #28a745; transform: scale(0.95); }</style><div style="text-align: center; margin-top: 20%;"><p style="font-size: 20px; font-weight: bold; margin-bottom: 20px;">この実験はフルスクリーンで実行されます。</p><p>準備ができたら下のボタンを押してフルスクリーンモードを開始してください。</p></div>',
+    button_label: 'フルスクリーンを開始する'
+};
+eem_timeline.push(enter_fullscreen);
 
 // =========================================================
 // ★各試行間の注視点（フィードバック後の画面リセット・連打防止用）
@@ -56,7 +99,7 @@ var fixation = {
     type: 'html-keyboard-response',
     stimulus: '<div style="font-size: 60px; color: #333; margin-top: 100px;">+</div>',
     choices: jsPsych.NO_KEYS,
-    trial_duration: 500, // 500ミリ秒間注視点を表示
+    trial_duration: 800, // 800ミリ秒間注視点を表示
     post_trial_gap: 0,
     data: { task: 'fixation' }
 };
@@ -99,22 +142,17 @@ var eem_feedback = {
         var right_shadow = (response === 'j') ? 'box-shadow: 0 0 15px rgba(40,167,69,0.6);' : '';
         var right_opacity = (response === 'j') ? '1' : '0.4';
 
-        var left_box = '<div style="padding: 20px; font-size: 24px; line-height: 1.5; width: 250px; border: 2px solid ' + left_border + '; border-radius: 8px; background-color: ' + left_bg + '; ' + left_shadow + ' opacity: ' + left_opacity + '; text-align: center;">' +
-            '<div style="display: inline-block; text-align: left;">' +
-            '<span style="display: inline-block; width: 80px;">あなた</span>: <span style="display: inline-block; width: 60px; text-align: right;">' + l_self + '</span>円<br>' +
-            '<span style="display: inline-block; width: 80px;">Aさん</span>: <span style="display: inline-block; width: 60px; text-align: right;">' + l_partner + '</span>円' +
-            '</div><br><br><span style="font-size: 18px; color: #666;">[F キー]</span></div>';
-        var right_box = '<div style="padding: 20px; font-size: 24px; line-height: 1.5; width: 250px; border: 2px solid ' + right_border + '; border-radius: 8px; background-color: ' + right_bg + '; ' + right_shadow + ' opacity: ' + right_opacity + '; text-align: center;">' +
-            '<div style="display: inline-block; text-align: left;">' +
-            '<span style="display: inline-block; width: 80px;">あなた</span>: <span style="display: inline-block; width: 60px; text-align: right;">' + r_self + '</span>円<br>' +
-            '<span style="display: inline-block; width: 80px;">Aさん</span>: <span style="display: inline-block; width: 60px; text-align: right;">' + r_partner + '</span>円' +
-            '</div><br><br><span style="font-size: 18px; color: #666;">[J キー]</span></div>';
+        var force_two_lines = jsPsych.timelineVariable('force_two_lines', true);
+
+        // 共通関数を使用してフィードバック用のボックスを生成
+        var left_box = generate_eem_box_html(l_self, l_partner, "F キー", left_bg, left_border, left_shadow, left_opacity, force_two_lines);
+        var right_box = generate_eem_box_html(r_self, r_partner, "J キー", right_bg, right_border, right_shadow, right_opacity, force_two_lines);
 
         return '<p style="margin-bottom: 50px; font-size: 28px; font-weight: bold;">どちらの配分を選びますか？<br><span style="font-size: 20px; font-weight: normal; color: #555;">（左なら F キー、右なら J キーを押してください）</span></p>' +
             '<div style="display: flex; justify-content: center; gap: 50px;">' + left_box + right_box + '</div>';
     },
     choices: jsPsych.NO_KEYS,
-    trial_duration: 500, // 500ミリ秒間フィードバックを表示
+    trial_duration: 800, // 800ミリ秒間フィードバックを表示
     post_trial_gap: 0,
     data: { task: 'eem_feedback' }
 };
@@ -125,9 +163,9 @@ var eem_feedback = {
 var imc_fail_count = 0;
 var imc_passed = false;
 
-// ★PC用に大きめのボタンデザインを定義（使い回し用）
-var large_quiz_btn = '<button class="jspsych-btn" style="font-size: 22px; padding: 15px 40px; margin: 10px 20px; cursor: pointer; min-width: 250px;">%choice%</button>';
-var large_next_btn = '<button class="jspsych-btn" style="font-size: 20px; padding: 15px 50px; margin: 20px; cursor: pointer;">%choice%</button>';
+// ★PC用に大きめのボタンデザインを定義（クリック時に確実にディレイを入れる）
+var large_quiz_btn = '<button class="jspsych-btn" style="font-size: 22px; padding: 15px 40px; margin: 10px 20px; cursor: pointer; min-width: 250px; transition: all 0.1s;" onmousedown="this.style.backgroundColor=\'#d4edda\'; this.style.borderColor=\'#28a745\'; this.style.transform=\'scale(0.95)\';" onclick="if(this.dataset.clicked) return; this.dataset.clicked=\'1\'; event.stopPropagation(); event.preventDefault(); var btn=this; setTimeout(function(){ btn.click(); }, 800);">%choice%</button>';
+var large_next_btn = '<button class="jspsych-btn" style="font-size: 20px; padding: 15px 50px; margin: 20px; cursor: pointer; transition: all 0.1s;" onmousedown="this.style.backgroundColor=\'#d4edda\'; this.style.borderColor=\'#28a745\'; this.style.transform=\'scale(0.95)\';" onclick="if(this.dataset.clicked) return; this.dataset.clicked=\'1\'; event.stopPropagation(); event.preventDefault(); var btn=this; setTimeout(function(){ btn.click(); }, 800);">%choice%</button>';
 
 var imc_quiz_combined = {
     type: 'html-button-response',
@@ -245,7 +283,11 @@ var eem_keyboard_instruction = {
 
         return html;
     },
-    choices: [' ']
+    choices: [' '],
+    on_start: function () {
+        // キーボード操作中（EEM課題中）はマウスカーソルを非表示にする
+        document.body.style.cursor = 'none';
+    }
 };
 
 // =========================================================
@@ -265,16 +307,16 @@ var practice_trial = {
     post_trial_gap: 0
 };
 
-// ★練習課題を4パターンに増加
+// ★本番のブロック構成（前半は左が平等、後半は両方不平等）に合わせて練習課題を設定
 var practice_stimuli = [
-    create_eem_stimulus(500, 500, 600, 400), // パターン1：平等 vs 利己的
-    create_eem_stimulus(800, 200, 400, 600), // パターン2：極端なトレードオフ
-    create_eem_stimulus(300, 700, 400, 400), // パターン3：自分が損をする状況
-    create_eem_stimulus(700, 300, 700, 300)  // パターン4：左右が全く同じ
+    create_eem_stimulus(500, 500, 600, 400), // パターンA: 左平等 vs 右不平等（本番の前半と同じ）
+    create_eem_stimulus(300, 300, 700, 500), // パターンA: 左平等 vs 右不平等（本番の前半と同じ）
+    create_eem_stimulus(800, 200, 400, 600, true), // パターンB: 左不平等 vs 右不平等（本番の後半と同じ、強制2行フラグ付き）
+    create_eem_stimulus(300, 700, 700, 300, true)  // パターンB: 左不平等 vs 右不平等（本番の後半と同じ、強制2行フラグ付き）
 ];
 
 var practice_procedure = {
-    timeline: [practice_trial, eem_feedback, fixation],
+    timeline: [fixation, practice_trial, eem_feedback],
     timeline_variables: practice_stimuli
 };
 
@@ -321,7 +363,7 @@ right_options.forEach(function (opt) {
                 choices: [' ']
             },
             {
-                timeline: [eem_trial, eem_feedback, fixation],
+                timeline: [fixation, eem_trial, eem_feedback],
                 timeline_variables: block_stimuli,
                 randomize_order: true // ★ ブロック内の試行をランダム化
             }
@@ -347,7 +389,7 @@ var unequal_options = [
 
 var unequal_stimuli = [];
 unequal_options.forEach(function (opt) {
-    unequal_stimuli.push(create_eem_stimulus(opt.ls, opt.lo, opt.rs, opt.ro));
+    unequal_stimuli.push(create_eem_stimulus(opt.ls, opt.lo, opt.rs, opt.ro, true)); // ★後半の12問は平等分配でも強制的に2行表示にする
 });
 
 // ★ 最初の4ブロックの順序をランダム化して eem_timeline に追加
@@ -363,7 +405,7 @@ eem_timeline.push({
             choices: [' ']
         },
         {
-            timeline: [eem_trial, eem_feedback, fixation],
+            timeline: [fixation, eem_trial, eem_feedback],
             timeline_variables: unequal_stimuli,
             randomize_order: true // ★ ブロック内の試行はランダム化する
         }
@@ -375,16 +417,19 @@ eem_timeline.push({
 // SVOの教示画面
 var svo_instructions = {
     type: 'html-button-response',
+    on_start: function () {
+        // マウス操作に戻るのでカーソルを再表示する
+        document.body.style.cursor = 'auto';
+    },
     stimulus: function () {
         // ★冒頭で定義した repo_site を使用
         var img_url = repo_site + "image/y_o.png";
 
-        var html = '<style>.jspsych-display-element { overflow-y: auto !important; }</style>' +
-            '<div style="text-align: left; line-height: 1.6; font-size: 18px; max-width: 800px; margin: 0 auto; padding-bottom: 20px; max-height: 400px; overflow-y: auto; padding-right: 15px;">';
+        var html = '<div style="text-align: left; line-height: 1.6; font-size: 18px; max-width: 800px; margin: 0 auto; padding-bottom: 20px;">';
 
         html += '<p style="font-size: 24px; font-weight: bold; text-align: left; border-bottom: 2px solid currentColor; padding-bottom: 10px; margin-bottom: 20px; color: #333;">【課題３：ポイントの分配】</p>';
         html += '<p style="margin-bottom: 10px; font-weight: bold; color: #d9534f;">（ここからはキーボードではなく、マウスを使って回答します）</p>';
-        html += '<p style="margin-bottom: 5px;">この課題も、<strong>あなたが見知らぬ相手と二人組になった状況</strong>を思い浮かべてください。お互いに匿名です。</p>';
+        html += '<p style="margin-bottom: 10px;">この課題も、<strong>あなたが見知らぬ相手と二人組になった状況</strong>を思い浮かべてください。お互いに匿名です。</p>';
 
         // SVOの選択肢の例をHTMLで生成
         var example_buttons = '<div style="display: flex; justify-content: center; gap: 6px; margin: 10px 0;">';
@@ -396,33 +441,34 @@ var svo_instructions = {
             var border_color = is_active ? '#28a745' : '#ccc';
             var shadow = is_active ? 'box-shadow: 0 0 8px rgba(40,167,69,0.5);' : '';
             var opacity = is_active ? '1' : '0.4';
-            example_buttons += '<div style="padding: 5px; border: 2px solid ' + border_color + '; border-radius: 6px; text-align: center; background-color: ' + bg_color + '; width: 65px; opacity: ' + opacity + '; ' + shadow + '; pointer-events: none;">' +
-                '<span style="font-size: 12px; font-weight: bold; color: #0056b3;">あなた</span><br><strong style="font-size: 18px;">' + ex_s[i] + '</strong><hr style="margin: 4px 0; border: none; border-top: 2px dashed #ccc;">' +
-                '<span style="font-size: 12px; font-weight: bold; color: #E65F00;">Aさん</span><br><strong style="font-size: 18px;">' + ex_o[i] + '</strong>' +
+            example_buttons += '<div style="padding: 2px 5px; border: 2px solid ' + border_color + '; border-radius: 6px; text-align: center; background-color: ' + bg_color + '; width: 80px; opacity: ' + opacity + '; ' + shadow + '; pointer-events: none; line-height: 1.1;">' +
+                '<span style="font-size: 11px; font-weight: bold; color: #0056b3;">あなた</span><br><strong style="font-size: 14px;">' + ex_s[i] + '</strong><hr style="margin: 2px 0; border: none; border-top: 1px dashed #ccc;">' +
+                '<span style="font-size: 11px; font-weight: bold; color: #E65F00;">Aさん</span><br><strong style="font-size: 14px;">' + ex_o[i] + '</strong>' +
                 '</div>';
         }
         example_buttons += '</div>';
 
-        html += '<p style="margin-bottom: 5px;">この相手とのポイントの配分についての決定を、あなたが行います。<br>' +
+        html += '<p style="margin-bottom: 10px;">この相手とのポイントの配分についての決定を、あなたが行います。<br>' +
             '画面には <strong>9つの選択肢</strong> が横に並んで表示されますので、その中から、<strong>あなたにとって好ましい分配</strong>のボタンを1つクリックして選んでください。</p>';
 
-        // 画像の復活（少し小さめ）
-        html += '<div style="text-align: center; margin: 5px 0;">';
-        html += '<img src="' + img_url + '" style="max-width: 50%; max-height: 80px; width: auto; height: auto;">';
+        // 画像の復活（少し大きめに戻す）
+        html += '<div style="text-align: center; margin: 15px 0;">';
+        html += '<img src="' + img_url + '" style="max-width: 50%; max-height: 100px; width: auto; height: auto;">';
         html += '</div>';
 
         // 例示の部分
-        html += '<div style="background-color: #f8f9fa; border: 1px solid #ddd; padding: 10px; border-radius: 8px; margin-top: 5px; text-align: center;">' +
+        html += '<div style="background-color: #f8f9fa; border: 1px solid #ddd; padding: 10px 15px; border-radius: 8px; margin-top: 10px; text-align: center;">' +
             '<p style="margin-bottom: 5px; font-size: 16px; font-weight: bold; text-align: left;">【選択肢の例】</p>' +
             example_buttons +
-            '<p style="font-size: 14px; margin: 0; text-align: left;">上の例では、<strong>あなたが56ポイントを受け取り、相手が40ポイントを受け取るような配分</strong>を選択しています。</p>' +
+            '<p style="font-size: 14px; letter-spacing: -0.5px; margin: 0; text-align: left;">上の例では、<strong>あなたが56ポイント、相手が40ポイントを受け取るような配分</strong>を選択しています。</p>' +
             '</div>' +
             '</div>';
 
         return html;
     },
     choices: ['次へ進む'],
-    button_html: large_next_btn // ※定義済みの大きめのボタンを使用
+    button_html: large_next_btn, // ※定義済みの大きめのボタンを使用
+    post_trial_gap: 800 // ボタンを押した後に少し長めのブランクを入れる
 };
 
 // SVOの座標データ
@@ -457,9 +503,9 @@ for (var j = 0; j < svo_endpoints.length; j++) {
         var self_amt = Math.round(ep1.s + t * (ep2.s - ep1.s));
         var other_amt = Math.round(ep1.o + t * (ep2.o - ep1.o));
 
-        var btn_html = '<div style="padding: 5px; border: 2px solid #333; border-radius: 6px; text-align: center; background-color: #fff; width: 65px;">' +
-            '<span style="font-size: 12px; font-weight: bold; color: #0056b3;">あなた</span><br><strong style="font-size: 18px;">' + self_amt + '</strong><hr style="margin: 4px 0; border: none; border-top: 2px dashed #ccc;">' +
-            '<span style="font-size: 12px; font-weight: bold; color: #E65F00;">Aさん</span><br><strong style="font-size: 18px;">' + other_amt + '</strong>' +
+        var btn_html = '<div style="padding: 10px; border: 2px solid #333; border-radius: 6px; text-align: center; background-color: #fff; width: 80px;">' +
+            '<span style="font-size: 14px; font-weight: bold; color: #0056b3;">あなた</span><br><strong style="font-size: 22px;">' + self_amt + '</strong><hr style="margin: 8px 0; border: none; border-top: 2px dashed #ccc;">' +
+            '<span style="font-size: 14px; font-weight: bold; color: #E65F00;">Aさん</span><br><strong style="font-size: 22px;">' + other_amt + '</strong>' +
             '</div>';
         choices_html.push(btn_html);
         amounts.push({ self: self_amt, other: other_amt });
@@ -509,7 +555,7 @@ var svo_feedback = {
     },
     choices: jsPsych.timelineVariable('choices_array'),
     button_html: '<button class="jspsych-btn" style="margin: 0 4px; padding: 0; border: none; background: none; cursor: default;">%choice%</button>',
-    trial_duration: 500,
+    trial_duration: 800,
     response_ends_trial: false,
     on_load: function () {
         var last_trial_data = jsPsych.data.get().last(1).values()[0];
@@ -536,15 +582,24 @@ var svo_feedback = {
             }
         }
     },
-    post_trial_gap: 500, // 試行間にブランク（真っ白な画面）を設ける
-    data: { task: 'svo_feedback' }
+    post_trial_gap: 0 // ブランクは試行前に独立したイベントとして入れるためここは0
 };
 
 // =========================================================
 // 手順のタイムライン組み立て
 // =========================================================
+
+// ★ SVOの試行前に表示するブランク
+var svo_blank = {
+    type: 'html-keyboard-response',
+    stimulus: '',
+    choices: jsPsych.NO_KEYS,
+    trial_duration: 800,
+    post_trial_gap: 0
+};
+
 var svo_procedure = {
-    timeline: [svo_trial, svo_feedback], // ★試行の直後にフィードバックを表示して次へ進む
+    timeline: [svo_blank, svo_trial, svo_feedback], // ★ 試行前（ブロックの最初含む）にブランクを挿入し、試行後はフィードバックですぐ終わる
     timeline_variables: svo_stimuli,
     randomize_order: true // SVOはランダムに提示
 };
