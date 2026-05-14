@@ -6,10 +6,15 @@ function get_eem_instruction_html(right_self, right_partner, is_unequal) {
     if (!is_unequal) {
         html += '<div style="padding: 15px; background-color: #e9ecef; border-left: 5px solid #007bff; margin-bottom: 20px;">' +
             '<p style="font-size: 20px; margin: 0; font-weight: bold; color: #0056b3;">新しいブロック（10問）が始まります。</p>' +
-            '<p style="margin: 10px 0 0 0;">このブロックでは、<strong>右側の金額が以下の組み合わせで「固定」</strong>されます。</p>' +
-            '<p style="font-size: 24px; margin: 15px 0 0 0;">あなた: <strong>' + right_self + '円</strong>　／　Aさん: <strong>' + right_partner + '円</strong></p>' +
+            '<p style="margin: 15px 0 0 0; line-height: 1.8;">左側の分配総額は順に変わりますが、ふたりとも<strong>同じ金額</strong>が与えられます。<br>' +
+            '右側の金額はいつも同じですが、ふたりの分配額は<strong>異なっています</strong>。</p>' +
+            '<p style="margin: 15px 0 0 0;">このブロックでは、右側の配分として具体的に以下の金額が固定して提示されます。</p>' +
+            '<div style="font-size: 24px; margin: 10px 0 0 20px; line-height: 1.5; width: 220px;">' +
+            '<div style="display: flex; justify-content: space-between;"><span>あなたは</span><span><strong>' + right_self + '</strong>円</span></div>' +
+            '<div style="display: flex; justify-content: space-between;"><span>Aさんは</span><span><strong>' + right_partner + '</strong>円</span></div>' +
             '</div>' +
-            '<p>左側の金額は1問ごとに変化します。<br>左右の金額をよく見比べて、好ましいと思う方を選んでください。</p>';
+            '</div>' +
+            '<p>左右の金額をよく見比べて、好ましいと思う方を選んでください。</p>';
     } else {
         html += '<div style="padding: 15px; background-color: #e9ecef; border-left: 5px solid #28a745; margin-bottom: 20px;">' +
             '<p style="font-size: 20px; margin: 0; font-weight: bold; color: #155724;">新しいブロック（12問）が始まります。</p>' +
@@ -28,16 +33,16 @@ function generate_eem_box_html(self_amt, other_amt, key_label, bg_color, border_
     // 数値が等しい場合は1行、異なる場合（または強制2行フラグがある場合）は2行で表示（高さは72pxで固定）
     if (self_amt === other_amt && !force_two_lines) {
         content = '<div style="height: 72px; display: flex; align-items: center; justify-content: center; white-space: nowrap;">' +
-            '<span>あなたとAさん</span><span style="margin: 0 5px;">:</span>' +
-            '<span style="width: 60px; text-align: right; font-weight: bold;">' + self_amt + '</span>円' +
+            '<span>あなたもAさんも</span>' +
+            '<span style="width: 65px; text-align: right; font-weight: bold;">' + self_amt + '</span>円' +
             '</div>';
     } else {
         content = '<div style="height: 72px; display: flex; flex-direction: column; justify-content: center; align-items: center;">' +
-            '<div style="width: 100%; display: flex; justify-content: center; align-items: center; white-space: nowrap;">' +
-            '<span style="width: 80px; text-align: left;">あなた</span>: <span style="width: 60px; text-align: right; font-weight: bold;">' + self_amt + '</span>円' +
+            '<div style="width: 200px; display: flex; justify-content: space-between; align-items: center; white-space: nowrap;">' +
+            '<span>あなたは</span><span><strong style="display: inline-block; width: 60px; text-align: right;">' + self_amt + '</strong>円</span>' +
             '</div>' +
-            '<div style="width: 100%; display: flex; justify-content: center; align-items: center; white-space: nowrap;">' +
-            '<span style="width: 80px; text-align: left;">Aさん</span>: <span style="width: 60px; text-align: right; font-weight: bold;">' + other_amt + '</span>円' +
+            '<div style="width: 200px; display: flex; justify-content: space-between; align-items: center; white-space: nowrap;">' +
+            '<span>Aさんは</span><span><strong style="display: inline-block; width: 60px; text-align: right;">' + other_amt + '</strong>円</span>' +
             '</div>' +
             '</div>';
     }
@@ -99,7 +104,7 @@ var fixation = {
     type: 'html-keyboard-response',
     stimulus: '<div style="font-size: 60px; color: #333; margin-top: 100px;">+</div>',
     choices: jsPsych.NO_KEYS,
-    trial_duration: 800, // 800ミリ秒間注視点を表示
+    trial_duration: 500, // 500ミリ秒間注視点を表示
     post_trial_gap: 0,
     data: { task: 'fixation' }
 };
@@ -152,7 +157,7 @@ var eem_feedback = {
             '<div style="display: flex; justify-content: center; gap: 50px;">' + left_box + right_box + '</div>';
     },
     choices: jsPsych.NO_KEYS,
-    trial_duration: 800, // 800ミリ秒間フィードバックを表示
+    trial_duration: 500, // 500ミリ秒間フィードバックを表示
     post_trial_gap: 0,
     data: { task: 'eem_feedback' }
 };
@@ -164,8 +169,8 @@ var imc_fail_count = 0;
 var imc_passed = false;
 
 // ★PC用に大きめのボタンデザインを定義（クリック時に確実にディレイを入れる）
-var large_quiz_btn = '<button class="jspsych-btn" style="box-sizing: border-box; font-family: inherit; font-weight: bold; font-size: 22px; padding: 15px 40px; margin: 10px 20px; cursor: pointer; min-width: 250px; transition: all 0.1s;" onmousedown="this.style.backgroundColor=\'#d4edda\'; this.style.borderColor=\'#28a745\'; this.style.transform=\'scale(0.95)\';" onclick="if(this.dataset.clicked) return; this.dataset.clicked=\'1\'; event.stopPropagation(); event.preventDefault(); var btn=this; setTimeout(function(){ btn.click(); }, 800);">%choice%</button>';
-var large_next_btn = '<button class="jspsych-btn" style="box-sizing: border-box; font-family: inherit; font-weight: bold; font-size: 20px; padding: 15px 50px; margin: 20px; cursor: pointer; transition: all 0.1s;" onmousedown="this.style.backgroundColor=\'#d4edda\'; this.style.borderColor=\'#28a745\'; this.style.transform=\'scale(0.95)\';" onclick="if(this.dataset.clicked) return; this.dataset.clicked=\'1\'; event.stopPropagation(); event.preventDefault(); var btn=this; setTimeout(function(){ btn.click(); }, 800);">%choice%</button>';
+var large_quiz_btn = '<button class="jspsych-btn" style="box-sizing: border-box; font-family: inherit; font-weight: bold; font-size: 22px; padding: 15px 40px; margin: 10px 20px; cursor: pointer; min-width: 250px; transition: all 0.1s;" onmousedown="this.style.backgroundColor=\'#d4edda\'; this.style.borderColor=\'#28a745\'; this.style.transform=\'scale(0.95)\';" onclick="if(this.dataset.clicked) return; this.dataset.clicked=\'1\'; event.stopPropagation(); event.preventDefault(); var btn=this; setTimeout(function(){ btn.click(); }, 500);">%choice%</button>';
+var large_next_btn = '<button class="jspsych-btn" style="box-sizing: border-box; font-family: inherit; font-weight: bold; font-size: 20px; padding: 15px 50px; margin: 20px; cursor: pointer; transition: all 0.1s;" onmousedown="this.style.backgroundColor=\'#d4edda\'; this.style.borderColor=\'#28a745\'; this.style.transform=\'scale(0.95)\';" onclick="if(this.dataset.clicked) return; this.dataset.clicked=\'1\'; event.stopPropagation(); event.preventDefault(); var btn=this; setTimeout(function(){ btn.click(); }, 500);">%choice%</button>';
 
 var imc_quiz_combined = {
     type: 'html-button-response',
@@ -468,7 +473,7 @@ var svo_instructions = {
     },
     choices: ['次へ進む'],
     button_html: large_next_btn, // ※定義済みの大きめのボタンを使用
-    post_trial_gap: 800 // ボタンを押した後に少し長めのブランクを入れる
+    post_trial_gap: 500 // ボタンを押した後に少し長めのブランクを入れる
 };
 
 // SVOの座標データ
@@ -555,7 +560,7 @@ var svo_feedback = {
     },
     choices: jsPsych.timelineVariable('choices_array'),
     button_html: '<button class="jspsych-btn" style="margin: 0 4px; padding: 0; border: none; background: none; cursor: default;">%choice%</button>',
-    trial_duration: 800,
+    trial_duration: 500,
     response_ends_trial: false,
     on_load: function () {
         var last_trial_data = jsPsych.data.get().last(1).values()[0];
@@ -594,7 +599,7 @@ var svo_blank = {
     type: 'html-keyboard-response',
     stimulus: '',
     choices: jsPsych.NO_KEYS,
-    trial_duration: 800,
+    trial_duration: 500,
     post_trial_gap: 0
 };
 
