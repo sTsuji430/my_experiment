@@ -231,8 +231,8 @@ var eem_keyboard_instruction = {
             'どちらの分配が好ましいと思うかを、2択から選んでください。</p>';
 
         // ★画像の上下余白を減らし、縦幅の制限 (max-height: 200px) を追加
-        html += '<div style="text-align: center; margin: 15px 0;">';
-        html += '<img src="' + img_url + '" style="max-width: 50%; max-height: 600px; width: auto; height: auto; border: 1px solid #ddd; border-radius: 8px; padding: 5px; background-color: #fff;">';
+        html += '<div style="text-align: center; margin: 10px 0;">';
+        html += '<img src="' + img_url + '" style="max-width: 50%; max-height: 200px; width: auto; height: auto; border: 1px solid #ddd; border-radius: 8px; padding: 5px; background-color: #fff;">';
         html += '</div>';
 
         // 枠内の余白（padding）や、上部の空白（margin-top）を縮小
@@ -379,7 +379,7 @@ var svo_instructions = {
         // ★冒頭で定義した repo_site を使用
         var img_url = repo_site + "image/y_o.png";
 
-        var html = '<div style="text-align: left; line-height: 1.6; font-size: 18px; max-width: 800px; margin: 0 auto; padding-bottom: 20px;">';
+        var html = '<div style="text-align: left; line-height: 1.6; font-size: 18px; max-width: 800px; margin: 0 auto; padding-bottom: 20px; max-height: 65vh; overflow-y: auto; padding-right: 15px;">';
 
         html += '<p style="font-size: 24px; font-weight: bold; text-align: left; border-bottom: 2px solid currentColor; padding-bottom: 10px; margin-bottom: 20px; color: #333;">【課題３：ポイントの分配】</p>';
         html += '<p style="margin-bottom: 10px; font-weight: bold; color: #d9534f;">（ここからはキーボードではなく、マウスを使って回答します）</p>';
