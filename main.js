@@ -379,7 +379,8 @@ var svo_instructions = {
         // ★冒頭で定義した repo_site を使用
         var img_url = repo_site + "image/y_o.png";
 
-        var html = '<div style="text-align: left; line-height: 1.6; font-size: 18px; max-width: 800px; margin: 0 auto; padding-bottom: 20px; max-height: 65vh; overflow-y: auto; padding-right: 15px;">';
+        var html = '<style>.jspsych-display-element { overflow-y: auto !important; }</style>' +
+            '<div style="text-align: left; line-height: 1.6; font-size: 18px; max-width: 800px; margin: 0 auto; padding-bottom: 20px; max-height: 400px; overflow-y: auto; padding-right: 15px;">';
 
         html += '<p style="font-size: 24px; font-weight: bold; text-align: left; border-bottom: 2px solid currentColor; padding-bottom: 10px; margin-bottom: 20px; color: #333;">【課題３：ポイントの分配】</p>';
         html += '<p style="margin-bottom: 10px; font-weight: bold; color: #d9534f;">（ここからはキーボードではなく、マウスを使って回答します）</p>';
