@@ -10,8 +10,8 @@ function get_eem_instruction_html(right_self, right_partner, is_unequal) {
             '右側の金額はいつも同じですが、ふたりの分配額は<strong>異なっています</strong>。</p>' +
             '<p style="margin: 15px 0 0 0;">このブロックでは、右側の配分として具体的に以下の金額が固定して提示されます。</p>' +
             '<div style="font-size: 24px; margin: 10px 0 0 20px; line-height: 1.5; width: 220px;">' +
-            '<div style="display: flex; justify-content: space-between;"><span>あなたは</span><span><strong>' + right_self + '</strong>円</span></div>' +
-            '<div style="display: flex; justify-content: space-between;"><span>Aさんは</span><span><strong>' + right_partner + '</strong>円</span></div>' +
+            '<div style="display: flex; justify-content: space-between;"><span>あなた:</span><span><strong>' + right_self + '</strong>円</span></div>' +
+            '<div style="display: flex; justify-content: space-between;"><span>Aさん:</span><span><strong>' + right_partner + '</strong>円</span></div>' +
             '</div>' +
             '</div>' +
             '<p>左右の金額をよく見比べて、好ましいと思う方を選んでください。</p>';
@@ -30,26 +30,31 @@ function get_eem_instruction_html(right_self, right_partner, is_unequal) {
 // 2. 選択肢ボックスのHTMLを生成する共通関数
 function generate_eem_box_html(self_amt, other_amt, key_label, bg_color, border_color, shadow, opacity, force_two_lines) {
     var content = '';
-    // 数値が等しい場合は1行、異なる場合（または強制2行フラグがある場合）は2行で表示（高さは72pxで固定）
+    // 数値が等しい場合は1行、異なる場合（または強制2行フラグがある場合）は2行で表示（高さは108pxで固定）
     if (self_amt === other_amt && !force_two_lines) {
-        content = '<div style="height: 72px; display: flex; align-items: center; justify-content: center; white-space: nowrap;">' +
-            '<span>あなたもAさんも</span>' +
-            '<span style="width: 65px; text-align: right; font-weight: bold;">' + self_amt + '</span>円' +
+        content = '<div style="height: 108px; display: flex; align-items: center; justify-content: center; white-space: nowrap;">' +
+            '<span style="margin-right: 5px;">あなたとAさん:</span>' +
+            '<span style="width: 60px; text-align: right; font-weight: bold;">' + self_amt + '</span>円' +
             '</div>';
     } else {
-        content = '<div style="height: 72px; display: flex; flex-direction: column; justify-content: center; align-items: center;">' +
+        content = '<div style="height: 108px; display: flex; flex-direction: column; justify-content: center; align-items: center;">' +
             '<div style="width: 200px; display: flex; justify-content: space-between; align-items: center; white-space: nowrap;">' +
-            '<span>あなたは</span><span><strong style="display: inline-block; width: 60px; text-align: right;">' + self_amt + '</strong>円</span>' +
+            '<span>あなた:</span><span><strong style="display: inline-block; width: 60px; text-align: right;">' + self_amt + '</strong>円</span>' +
             '</div>' +
             '<div style="width: 200px; display: flex; justify-content: space-between; align-items: center; white-space: nowrap;">' +
-            '<span>Aさんは</span><span><strong style="display: inline-block; width: 60px; text-align: right;">' + other_amt + '</strong>円</span>' +
+            '<span>Aさん:</span><span><strong style="display: inline-block; width: 60px; text-align: right;">' + other_amt + '</strong>円</span>' +
             '</div>' +
             '</div>';
     }
 
+    var footer = '';
+    if (key_label) {
+        footer = '<div style="margin-top: 20px; border-top: 1px solid #ddd; padding-top: 10px; width: 60%;"><span style="font-size: 18px; color: #666;">[' + key_label + ']</span></div>';
+    }
+
     return '<div style="padding: 20px; font-size: 24px; line-height: 1.5; width: 280px; border: 2px solid ' + border_color + '; border-radius: 12px; background-color: ' + bg_color + '; ' + (shadow || "") + ' opacity: ' + opacity + '; text-align: center; display: flex; flex-direction: column; align-items: center; transition: all 0.2s;">' +
         content +
-        '<div style="margin-top: 20px; border-top: 1px solid #ddd; padding-top: 10px; width: 60%;"><span style="font-size: 18px; color: #666;">[' + key_label + ']</span></div></div>';
+        footer + '</div>';
 }
 
 // 3. 共通のHTML生成関数（試行用）
@@ -170,6 +175,7 @@ var imc_passed = false;
 
 // ★PC用に大きめのボタンデザインを定義（クリック時に確実にディレイを入れる）
 var large_quiz_btn = '<button class="jspsych-btn" style="box-sizing: border-box; font-family: inherit; font-weight: bold; font-size: 22px; padding: 15px 40px; margin: 10px 20px; cursor: pointer; min-width: 250px; transition: all 0.1s;" onmousedown="this.style.backgroundColor=\'#d4edda\'; this.style.borderColor=\'#28a745\'; this.style.transform=\'scale(0.95)\';" onclick="if(this.dataset.clicked) return; this.dataset.clicked=\'1\'; event.stopPropagation(); event.preventDefault(); var btn=this; setTimeout(function(){ btn.click(); }, 500);">%choice%</button>';
+var layout_quiz_btn = '<button class="jspsych-btn" style="box-sizing: border-box; font-family: inherit; font-weight: bold; font-size: 20px; padding: 15px 40px; margin: 10px 20px; cursor: pointer; width: 680px; max-width: 90vw; transition: all 0.1s;" onmousedown="this.style.backgroundColor=\'#d4edda\'; this.style.borderColor=\'#28a745\'; this.style.transform=\'scale(0.95)\';" onclick="if(this.dataset.clicked) return; this.dataset.clicked=\'1\'; event.stopPropagation(); event.preventDefault(); var btn=this; setTimeout(function(){ btn.click(); }, 500);">%choice%</button>';
 var large_next_btn = '<button class="jspsych-btn" style="box-sizing: border-box; font-family: inherit; font-weight: bold; font-size: 20px; padding: 15px 50px; margin: 20px; cursor: pointer; transition: all 0.1s;" onmousedown="this.style.backgroundColor=\'#d4edda\'; this.style.borderColor=\'#28a745\'; this.style.transform=\'scale(0.95)\';" onclick="if(this.dataset.clicked) return; this.dataset.clicked=\'1\'; event.stopPropagation(); event.preventDefault(); var btn=this; setTimeout(function(){ btn.click(); }, 500);">%choice%</button>';
 
 var imc_quiz_combined = {
@@ -195,7 +201,7 @@ var imc_quiz_combined = {
         html += '<hr style="margin: 20px 0; border: 0; border-top: 2px dashed #ccc;">';
 
         html += '<div style="text-align: left; padding: 15px; background-color: #f8f9fa; border-radius: 8px; border: 1px solid #ddd;">';
-        html += '<p style="font-weight: bold; color: #d9534f; margin-bottom: 5px;">【2回以上不正解だった場合、報酬をお支払いすることはできません】</p>';
+        html += '<p style="font-weight: bold; color: #d9534f; margin-bottom: 5px;">【※クイズへの回答は2回までです。2回以上不正解だった場合、次の課題に進みます】</p>';
         html += '<p style="margin-bottom: 10px;">（' + (imc_fail_count + 1) + '回目）</p>';
         html += '<p style="font-size: 22px; font-weight: bold; margin: 0; color: #333;">課題で想像する相手は、____である。</p>';
         html += '</div></div>';
@@ -228,7 +234,7 @@ var imc_feedback = {
             if (imc_fail_count >= 2) {
                 html += '<p style="font-size: 24px; font-weight: bold; text-align: left; border-bottom: 2px solid currentColor; padding-bottom: 10px; margin-bottom: 20px; color: #d9534f;">不正解です！</p>' +
                     '<p>この課題で想像する場面は、<strong>見知らぬ人と2人組になった場面</strong>です。</p>' +
-                    '<p style="color: #d9534f; font-weight: bold; margin-top: 20px;">2回不正解であったため、報酬をお支払いすることはできません。<br>次のページに進んでください。</p>';
+                    '<p style="color: #d9534f; font-weight: bold; margin-top: 20px;">2回不正解であったため、次のページに進みます。</p>';
             } else {
                 html += '<p style="font-size: 24px; font-weight: bold; text-align: left; border-bottom: 2px solid currentColor; padding-bottom: 10px; margin-bottom: 20px; color: #d9534f;">不正解です！</p>' +
                     '<p>この課題で想像する場面は、<strong>見知らぬ人と2人組になった場面</strong>です。</p>' +
@@ -244,9 +250,10 @@ var imc_feedback = {
         if (!imc_passed && imc_fail_count >= 2) {
             try {
                 Qualtrics.SurveyEngine.setEmbeddedData('imc_failed', '1');
-                document.getElementById('NextButton').click();
             } catch (e) { console.log('Qualtrics連携エラー'); }
-            jsPsych.endExperiment(' ');
+            // 実験を中断し、experiment_updated.htmlの on_finish でクッション画面を表示する
+            jsPsych.data.addProperties({ aborted_by: 'imc' });
+            jsPsych.endExperiment();
         }
     }
 };
@@ -269,9 +276,9 @@ var eem_keyboard_instruction = {
         var img_url = repo_site + "image/key_instruction.png";
 
         var html = '<div style="text-align: left; line-height: 1.6; font-size: 18px; max-width: 800px; margin: 0 auto; padding-bottom: 20px;">' +
-            '<p style="font-size: 24px; font-weight: bold; text-align: left; border-bottom: 2px solid currentColor; padding-bottom: 10px; margin-bottom: 20px; color: #333;">ここからはキーボードを使います</p>' +
-            '<p style="margin-bottom: 10px;">課題は、あなたの報酬分配の好みについて尋ねています。<br>' +
-            'どちらの分配が好ましいと思うかを、2択から選んでください。</p>';
+            '<p style="font-size: 24px; font-weight: bold; text-align: left; border-bottom: 2px solid currentColor; padding-bottom: 10px; margin-bottom: 20px; color: #333;">回答方法について</p>' +
+            '<p style="margin-bottom: 10px;">先ほど説明した形式の選択肢が左右に2つ提示されますので、<br>' +
+            'あなたが好ましいと思う方をキーボードのキーを押して選んでください。</p>';
 
         // ★画像の上下余白を減らし、縦幅の制限 (max-height: 200px) を追加
         html += '<div style="text-align: center; margin: 10px 0;">';
@@ -298,6 +305,121 @@ var eem_keyboard_instruction = {
 // =========================================================
 // 3. EEM練習課題ブロック
 // =========================================================
+
+// --- 画面レイアウトの教示とクイズ ---
+var layout_fail_count = 0;
+var layout_passed = false;
+
+var eem_layout_instruction = {
+    type: 'html-button-response',
+    stimulus: function () {
+        return '<div style="text-align: left; line-height: 1.6; font-size: 18px; max-width: 800px; margin: 0 auto;">' +
+            '<p style="font-size: 24px; font-weight: bold; text-align: left; border-bottom: 2px solid currentColor; padding-bottom: 5px; margin-bottom: 15px; color: #0056b3;">画面の見方について</p>' +
+            '<p style="margin-bottom: 15px;">課題で提示される選択肢には、以下の2通りの表示方法があります。</p>' +
+
+            '<div style="display: flex; justify-content: space-around; align-items: flex-start; margin-bottom: 15px; gap: 20px;">' +
+            '  <div style="text-align: center; flex: 1;">' +
+            '    <p style="font-size: 16px; font-weight: bold; margin-bottom: 5px;">① 金額が異なる場合</p>' +
+            generate_eem_box_html(600, 400, "", "#fff", "#333", "", "1", false) +
+            '    <p style="font-size: 14px; margin-top: 5px; color: #555;">「あなた」と「Aさん」が<br>別々の行に表示されます。</p>' +
+            '  </div>' +
+            '  <div style="text-align: center; flex: 1;">' +
+            '    <p style="font-size: 16px; font-weight: bold; margin-bottom: 5px;">② 金額が同じ場合</p>' +
+            generate_eem_box_html(500, 500, "", "#fff", "#333", "", "1", false) +
+            '    <p style="font-size: 14px; margin-top: 5px; color: #555;">「あなたとAさん」として<br>1行にまとめて表示されます。</p>' +
+            '  </div>' +
+            '</div>' +
+
+            '<div style="background-color: #f8f9fa; padding: 10px 15px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px; font-size: 17px;">' +
+            '  <p style="margin: 3px 0;"><strong>①の場合：</strong> あなたが <strong>600円</strong>、Aさんが <strong>400円</strong> をもらえます。</p>' +
+            '  <p style="margin: 3px 0;"><strong>②の場合：</strong> あなたとAさんが、<strong>ともに 500円ずつ</strong> もらえます。</p>' +
+            '</div>' +
+            '<p style="margin-bottom: 10px; color: #d9534f; font-weight: bold; font-size: 17px;">※いずれも「それぞれが受け取る金額」であり、2人で分け合うという意味ではありません。</p>' +
+            '<p style="font-weight: bold; color: #333;">確認のため、次のページでクイズに答えてください。</p>' +
+            '</div>';
+    },
+    choices: ['確認クイズへ進む'],
+    button_html: large_next_btn
+};
+
+var eem_layout_quiz = {
+    type: 'html-button-response',
+    stimulus: function () {
+        return '<style>#jspsych-html-button-response-btngroup { display: flex; flex-direction: column; align-items: center; }</style>' +
+            '<div style="text-align: left; line-height: 1.6; font-size: 18px; max-width: 800px; margin: 0 auto; padding-bottom: 20px;">' +
+            '<p style="font-size: 24px; font-weight: bold; text-align: left; border-bottom: 2px solid currentColor; padding-bottom: 10px; margin-bottom: 20px; color: #333;">【確認クイズ】</p>' +
+            '<div style="display: flex; justify-content: center; margin-bottom: 20px;">' +
+            generate_eem_box_html(500, 500, "", "#fff", "#333", "", "1", false) +
+            '</div>' +
+            '<p style="margin-bottom: 10px;">上の表示はどのような意味でしょうか？正しいものを選んでください。</p>' +
+            '<p style="font-weight: bold; color: #d9534f; margin-bottom: 5px;">【※クイズへの回答は2回までです。2回以上不正解だった場合、次の課題に進みます】</p>' +
+            '<p style="margin-bottom: 10px; font-weight: bold;">（' + (layout_fail_count + 1) + '回目）</p>' +
+            '</div>';
+    },
+    choices: ['あなたとAさんが、ともに500円ずつもらえる', '500円を、あなたとAさんの2人で分ける（250円ずつになる）'],
+    button_html: layout_quiz_btn,
+    data: { task: 'layout_quiz' },
+    on_finish: function (data) {
+        if (data.response === 0) {
+            layout_passed = true;
+            data.correct = true;
+        } else {
+            layout_passed = false;
+            data.correct = false;
+            layout_fail_count++;
+        }
+    }
+};
+
+var eem_layout_feedback = {
+    type: 'html-button-response',
+    stimulus: function () {
+        if (layout_passed) {
+            return '<div style="text-align: left; line-height: 1.6; font-size: 18px; max-width: 800px; margin: 0 auto; padding-bottom: 30px;">' +
+                '<p style="font-size: 28px; color: #28a745; font-weight: bold; border-bottom: 2px solid #28a745; padding-bottom: 10px;">正解です！</p>' +
+                '<p>提示される金額は、<strong>それぞれが受け取る金額</strong>を表しています。</p>' +
+                '</div>';
+        } else {
+            if (layout_fail_count >= 2) {
+                return '<div style="text-align: left; line-height: 1.6; font-size: 18px; max-width: 800px; margin: 0 auto; padding-bottom: 30px;">' +
+                    '<p style="font-size: 28px; color: #d9534f; font-weight: bold; border-bottom: 2px solid #d9534f; padding-bottom: 10px;">不正解です</p>' +
+                    '<p>提示される金額は、<strong>それぞれが受け取る金額</strong>を表しています。<br>（2人で分けるという意味ではありません）</p>' +
+                    '<p style="margin-top: 20px; font-weight: bold; color: #d9534f;">2回不正解であったため、次の課題へ進みます。</p>' +
+                    '</div>';
+            } else {
+                return '<div style="text-align: left; line-height: 1.6; font-size: 18px; max-width: 800px; margin: 0 auto; padding-bottom: 30px;">' +
+                    '<p style="font-size: 28px; color: #d9534f; font-weight: bold; border-bottom: 2px solid #d9534f; padding-bottom: 10px;">不正解です</p>' +
+                    '<p>提示される金額は、<strong>それぞれが受け取る金額</strong>を表しています。<br>（2人で分けるという意味ではありませんのでご注意ください。）</p>' +
+                    '<p style="margin-top: 40px; font-weight: bold; color: #d9534f;">もう一度説明を確認してください。</p>' +
+                    '</div>';
+            }
+        }
+    },
+    choices: ['次へ進む'],
+    button_html: large_next_btn,
+    on_finish: function () {
+        if (!layout_passed && layout_fail_count >= 2) {
+            try {
+                Qualtrics.SurveyEngine.setEmbeddedData('layout_failed', '1');
+            } catch (e) { console.log('Qualtrics連携エラー'); }
+            // 実験を中断し、experiment_updated.htmlの on_finish でクッション画面を表示する
+            jsPsych.data.addProperties({ aborted_by: 'layout' });
+            jsPsych.endExperiment();
+        }
+    }
+};
+
+var eem_layout_loop = {
+    timeline: [eem_layout_instruction, eem_layout_quiz, eem_layout_feedback],
+    loop_function: function () {
+        if (layout_passed || layout_fail_count >= 2) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+};
+
 var practice_trial = {
     type: 'html-keyboard-response',
     stimulus: jsPsych.timelineVariable('stimulus_html'),
@@ -337,6 +459,7 @@ var practice_end = {
 
 // タイムラインへの追加
 eem_timeline.push(imc_loop);
+eem_timeline.push(eem_layout_loop); // クイズをまとめるため、キーボード教示の前に移動
 eem_timeline.push(eem_keyboard_instruction);
 eem_timeline.push(practice_procedure);
 eem_timeline.push(practice_end);
