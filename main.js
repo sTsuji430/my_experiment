@@ -251,9 +251,9 @@ var imc_feedback = {
             try {
                 Qualtrics.SurveyEngine.setEmbeddedData('imc_failed', '1');
             } catch (e) { console.log('Qualtrics連携エラー'); }
-            // 実験を中断し、experiment_updated.htmlの on_finish でクッション画面を表示する
-            jsPsych.data.addProperties({ aborted_by: 'imc' });
-            jsPsych.endExperiment();
+
+            // ★ここを追加：残りのタイムラインをすべて飛ばして終了処理へ
+            jsPsych.endExperiment('理解度チェックに2回不正解となったため、次のアンケートへ進みます。');
         }
     }
 };
@@ -402,9 +402,9 @@ var eem_layout_feedback = {
             try {
                 Qualtrics.SurveyEngine.setEmbeddedData('layout_failed', '1');
             } catch (e) { console.log('Qualtrics連携エラー'); }
-            // 実験を中断し、experiment_updated.htmlの on_finish でクッション画面を表示する
-            jsPsych.data.addProperties({ aborted_by: 'layout' });
-            jsPsych.endExperiment();
+
+            // ★ここを追加：残りのタイムラインをすべて飛ばして終了処理へ
+            jsPsych.endExperiment('レイアウト確認に2回不正解となったため、次のアンケートへ進みます。');
         }
     }
 };
